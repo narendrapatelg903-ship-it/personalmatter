@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>AutoBooks CA — Kalbi Solutions Pvt. Ltd.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --bg:#06000f;--bg2:#0d0020;--bg3:#110030;
+  --p:#7c3aed;--p2:#9333ea;--p3:#a855f7;--p4:#c4b5fd;
+  --blue:#3b82f6;--green:#22c55e;--orange:#f97316;--red:#f43f5e;
+  --g1:rgba(124,58,237,0.35);--g2:rgba(147,51,234,0.2);
+  --border:rgba(255,255,255,0.07);--border2:rgba(124,58,237,0.25);
+  --glass:rgba(255,255,255,0.03);--glass2:rgba(124,58,237,0.06);
+  --t1:#f8fafc;--t2:#94a3b8;--t3:#475569;--t4:#334155;
+  --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--font);overflow-x:hidden}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
+button{cursor:pointer;font-family:var(--font)}
+input,select,textarea{font-family:var(--font)}
+img{max-width:100%;display:block}
+
+/* ── GRID BG ── */
+.grid-bg{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(124,58,237,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.07) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);
+  pointer-events:none;
+}
+
+/* ── GLOW ORBS ── */
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px)}
+.orb-tl{width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.22),transparent 70%);top:-200px;left:-150px}
+.orb-tr{width:500px;height:500px;background:radial-gradient(circle,rgba(147,51,234,0.18),transparent 70%);top:-100px;right:-150px}
+.orb-bl{width:400px;height:400px;background:radial-gradient(circle,rgba(59,130,246,0.12),transparent 70%);bottom:-100px;left:-100px}
+.orb-br{width:450px;height:450px;background:radial-gradient(circle,rgba(124,58,237,0.15),transparent 70%);bottom:-150px;right:-100px}
+.orb-mid{width:300px;height:300px;background:radial-gradient(circle,rgba(147,51,234,0.1),transparent 70%);top:40%;left:45%}
+
+/* ── BUTTONS ── */
+.btn-purple{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.2px;
+  box-shadow:0 0 28px rgba(124,58,237,0.45),0 2px 8px rgba(0,0,0,0.4);
+  transition:all 0.22s;cursor:pointer;position:relative;overflow:hidden;
+}
+.btn-purple::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);opacity:0;transition:opacity 0.22s}
+.btn-purple:hover{transform:translateY(-3px);box-shadow:0 0 48px rgba(124,58,237,0.6),0 8px 24px rgba(0,0,0,0.4)}
+.btn-purple:hover::before{opacity:1}
+.btn-purple:active{transform:translateY(0)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 26px;border-radius:50px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);
+  color:#fff;font-size:15px;font-weight:600;
+  transition:all 0.22s;cursor:pointer;
+}
+.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-2px)}
+.badge-new{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:50px;
+  background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);
+  font-size:12px;font-weight:600;color:var(--p3);letter-spacing:0.3px;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--p3);animation:bpulse 2s infinite}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,0.5)}50%{box-shadow:0 0 0 6px rgba(168,85,247,0)}}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes lmove{0%{transform:translateX(-20%) scaleX(0.8);opacity:0}15%{opacity:1}80%{opacity:0.8}100%{transform:translateX(120%) scaleX(1.2);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.fade-up-1{animation:fadeUp 0.8s ease both}
+.fade-up-2{animation:fadeUp 0.8s ease 0.15s both}
+.fade-up-3{animation:fadeUp 0.8s ease 0.3s both}
+.fade-up-4{animation:fadeUp 0.8s ease 0.45s both}
+
+/* ── NAV ── */
+#main-nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:60px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(6,0,15,0.7);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  transition:all 0.3s;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--p),var(--blue));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 0 20px rgba(124,58,237,0.5);
+}
+.nav-logo-text{font-size:17px;font-weight:800;color:var(--t1);letter-spacing:-0.5px}
+.nav-links{display:flex;gap:28px}
+.nav-link{color:var(--t2);font-size:14px;font-weight:500;text-decoration:none;transition:color 0.2s;cursor:pointer}
+.nav-link:hover{color:#fff}
+.nav-ctas{display:flex;gap:12px;align-items:center}
+@media(max-width:768px){#main-nav{padding:0 20px}.nav-links{display:none}}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 80px;
+  position:relative;overflow:hidden;
+}
+.hero-light-lines{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.lline{
+  position:absolute;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,58,237,0.6),rgba(147,51,234,0.4),transparent);
+  animation:lmove linear infinite;filter:blur(0.5px);
+}
+.hero-h1{
+  font-size:clamp(42px,7.5vw,96px);font-weight:900;
+  line-height:1.0;letter-spacing:-3px;color:#fff;
+  margin-bottom:24px;
+}
+.hero-h1 .grad{
+  background:linear-gradient(135deg,#c4b5fd 0%,#a78bfa 30%,#818cf8 60%,#60a5fa 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:clamp(15px,2vw,19px);color:var(--t2);line-height:1.75;max-width:580px;margin:0 auto 40px;font-weight:400}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── DASHBOARD PREVIEW ── */
+.dash-preview-wrap{
+  position:relative;margin-top:60px;width:100%;max-width:1000px;
+}
+.dash-preview-glow{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:80%;height:100px;
+  background:linear-gradient(to top,rgba(124,58,237,0.5),transparent);
+  filter:blur(40px);
+}
+.dash-preview-img{
+  width:100%;border-radius:20px 20px 0 0;
+  border:1px solid rgba(124,58,237,0.2);border-bottom:none;
+  box-shadow:0 0 80px rgba(124,58,237,0.2),0 40px 80px rgba(0,0,0,0.6);
+  overflow:hidden;
+}
+
+/* ── SECTION COMMONS ── */
+.section{padding:100px 24px;position:relative;overflow:hidden}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;color:var(--p3);text-transform:uppercase;letter-spacing:2.5px;margin-bottom:12px}
+.section-title{font-size:clamp(30px,4.5vw,54px);font-weight:800;letter-spacing:-1.5px;color:#fff;line-height:1.05;margin-bottom:18px}
+.section-sub{font-size:16px;color:var(--t2);line-height:1.8;max-width:560px}
+
+/* ── LOGOS STRIP ── */
+.logos-strip{
+  padding:36px 24px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:rgba(124,58,237,0.02);
+}
+.logos-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:clamp(20px,5vw,56px);flex-wrap:wrap}
+.logo-item{color:rgba(255,255,255,0.22);font-size:15px;font-weight:700;letter-spacing:-0.3px;transition:color 0.2s;white-space:nowrap}
+.logo-item:hover{color:rgba(255,255,255,0.6)}
+
+/* ── SPLIT SECTIONS (image + text) ── */
+.split-section{
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;
+  align-items:center;padding:90px 0;
+  border-bottom:1px solid var(--border);
+}
+.split-section.reverse{direction:rtl}
+.split-section.reverse>*{direction:ltr}
+.split-img-wrap{
+  position:relative;border-radius:20px;overflow:hidden;
+  border:1px solid rgba(124,58,237,0.2);
+}
+.split-img-wrap::before{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(135deg,rgba(124,58,237,0.1),transparent 60%);
+  pointer-events:none;
+}
+.split-img-wrap img{width:100%;height:360px;object-fit:cover;display:block}
+.split-text{display:flex;flex-direction:column;gap:16px}
+.split-text p{font-size:16px;color:var(--t2);line-height:1.85}
+.split-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{
+  padding:6px 14px;border-radius:30px;font-size:12px;font-weight:600;
+  background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);
+  color:var(--p4);
+}
+@media(max-width:900px){
+  .split-section{grid-template-columns:1fr;gap:32px}
+  .split-section.reverse{direction:ltr}
+}
+
+/* ── GLASS CARDS ── */
+.glass-card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:18px;padding:28px;
+  transition:all 0.25s;
+  position:relative;overflow:hidden;
+}
+.glass-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,58,237,0.05),transparent);
+  opacity:0;transition:opacity 0.25s;pointer-events:none;
+}
+.glass-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 60px rgba(124,58,237,0.1)}
+.glass-card:hover::before{opacity:1}
+
+/* ── FEATURE GRID ── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(147,51,234,0.1));
+  border:1px solid rgba(124,58,237,0.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+}
+.feat-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.3px}
+.feat-desc{font-size:13px;color:var(--t2);line-height:1.7}
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.feat-grid{grid-template-columns:1fr}}
+
+/* ── STEPS ── */
+.steps-row{display:flex;gap:0;position:relative;margin-top:60px}
+.steps-row::before{content:'';position:absolute;top:24px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.4),transparent)}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px}
+.step-num{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  border:3px solid var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:#fff;
+  margin-bottom:16px;position:relative;z-index:1;
+  box-shadow:0 0 24px rgba(124,58,237,0.5);
+}
+.step-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px}
+.step-desc{font-size:12px;color:var(--t2);line-height:1.6}
+@media(max-width:600px){.steps-row{flex-direction:column;gap:32px}.steps-row::before{display:none}}
+
+/* ── PRICING SECTION ── */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:48px}
+.price-card{
+  background:var(--glass);border:1px solid var(--border);border-radius:20px;
+  padding:28px 24px;
+}
+.price-card.featured{
+  background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(147,51,234,0.08));
+  border-color:rgba(124,58,237,0.4);
+  box-shadow:0 0 40px rgba(124,58,237,0.15);
+}
+.price-badge{font-size:11px;font-weight:700;color:var(--p3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.price-name{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+.price-desc{font-size:13px;color:var(--t2);margin-bottom:24px;line-height:1.5}
+.price-amount{font-size:44px;font-weight:900;color:#fff;letter-spacing:-2px}
+.price-amount span{font-size:16px;font-weight:500;color:var(--t2);letter-spacing:0}
+.price-free{
+  font-size:40px;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(135deg,#c4b5fd,#818cf8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.price-features li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2)}
+.price-features li::before{content:'✓';color:var(--p3);font-weight:700;flex-shrink:0}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr}}
+
+/* ── CTA SECTION ── */
+.cta-box{
+  background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(147,51,234,0.06));
+  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
+  padding:72px 48px;text-align:center;position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;top:-80px;left:50%;transform:translateX(-50%);
+  width:300px;height:200px;
+  background:radial-gradient(circle,rgba(124,58,237,0.35),transparent 70%);
+  pointer-events:none;
+}
+
+/* ── FOOTER ── */
+.site-footer{
+  border-top:1px solid var(--border);
+  padding:24px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  background:rgba(6,0,15,0.8);
+}
+.footer-brand{font-size:13px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:0.3px}
+.footer-copy{font-size:12px;color:var(--t4)}
+@media(max-width:600px){.site-footer{padding:20px;flex-direction:column;align-items:center;text-align:center}}
+
+/* ── AUTH PAGE ── */
+#auth-page{
+  display:none;min-height:100vh;
+  align-items:center;justify-content:center;padding:20px;
+  background:var(--bg);position:relative;overflow:hidden;
+}
+.auth-wrap{width:100%;max-width:440px;position:relative;z-index:1}
+.auth-card{
+  background:rgba(13,0,32,0.8);
+  border:1px solid rgba(124,58,237,0.2);
+  border-radius:22px;padding:40px 36px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 60px rgba(124,58,237,0.12);
+}
+.auth-input{
+  width:100%;padding:13px 16px;border-radius:12px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  color:#fff;font-size:14px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.auth-input:focus{border-color:rgba(124,58,237,0.6);box-shadow:0 0 0 3px rgba(124,58,237,0.1)}
+.auth-input::placeholder{color:var(--t4)}
+.auth-lbl{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:6px}
+.auth-btn{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 24px rgba(124,58,237,0.4);
+  transition:all 0.2s;
+}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(124,58,237,0.55)}
+.google-btn{
+  width:100%;padding:13px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.05);color:#fff;
+  font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all 0.2s;
+}
+.google-btn:hover{background:rgba(255,255,255,0.1);transform:translateY(-1px)}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:12px;color:var(--t4);white-space:nowrap}
+.auth-switch{text-align:center;font-size:13px;color:var(--t2);margin-top:20px}
+.auth-switch a{color:var(--p3);cursor:pointer;font-weight:600;text-decoration:none}
+
+/* ── PRIVACY MODAL ── */
+#privacy-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);z-index:900;
+  align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(6px);
+}
+.privacy-box{
+  background:#0d0020;border:1px solid rgba(124,58,237,0.25);border-radius:20px;
+  width:100%;max-width:540px;max-height:80vh;overflow-y:auto;padding:32px;
+}
+.privacy-box h2{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px}
+.privacy-box p,.privacy-box li{font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:10px}
+.privacy-box h3{font-size:14px;font-weight:700;color:rgba(255,255,255,0.8);margin:18px 0 8px}
+.privacy-box ul{padding-left:16px}
+
+/* ── DEMO BANNER ── */
+#demo-banner{
+  display:none;
+  background:linear-gradient(90deg,rgba(124,58,237,0.2),rgba(147,51,234,0.12));
+  border-bottom:1px solid rgba(124,58,237,0.3);
+  padding:10px 20px;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;z-index:200;position:relative;
+}
+.demo-btn{
+  padding:7px 18px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;font-size:12px;font-weight:700;cursor:pointer;
+}
+
+/* ── APP SHELL REDESIGN ── */
+.app-shell{display:flex;flex-direction:column;height:100vh;height:100dvh;background:var(--bg)}
+.top-nav{
+  background:rgba(6,0,15,0.95);border-bottom:1px solid var(--border);
+  padding:0 18px;display:flex;align-items:center;justify-content:space-between;
+  height:56px;flex-shrink:0;backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;
+}
+.nav-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.main-area{display:flex;flex:1;overflow:hidden;position:relative}
+.sidebar{
+  width:200px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;
+  background:rgba(6,0,15,0.6);transition:transform 0.25s;
+}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200}
+.content{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}
+.bottom-nav{
+  display:none;background:rgba(6,0,15,0.98);
+  border-top:1px solid var(--border);flex-shrink:0;
+}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.dash-grid{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+.intg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acard{
+  background:var(--glass2);
+  border:1px solid var(--border2);
+  border-radius:14px;
+}
+.acard-hover:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.08)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:520px}
+.hrow:hover{background:rgba(124,58,237,0.05)!important}
+.icard{transition:all 0.18s;cursor:pointer}
+.icard:active{transform:scale(0.97)}
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .dash-grid,.intg-grid{grid-template-columns:1fr}
+  .sidebar{position:fixed;top:56px;left:0;height:calc(100dvh - 56px);z-index:300;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .nav-tabs{display:none}
+  .bottom-nav{display:flex;justify-content:space-around;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+  #hamburger{display:flex!important}
+}
+@media(max-width:600px){
+  .top-nav{padding:0 12px;height:52px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi-grid>*:last-child{grid-column:span 2}
+  .form-grid{grid-template-columns:1fr}
+  .content{padding:12px}
+}
+.app-footer{border-top:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(6,0,15,0.95);flex-shrink:0}
+
+/* ── REACT INPUT/BUTTON OVERRIDES (for JSX) ── */
+.INP{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#fff;font-size:14px;width:100%}
+.INP:focus{outline:none;border-color:rgba(124,58,237,0.5);box-shadow:0 0 0 3px rgba(124,58,237,0.08)}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════ -->
+<div id="landing-page">
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="scrollToTop()">
+    <div class="nav-logo-icon">⚡</div>
+    <span class="nav-logo-text">AutoBooks CA</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="document.getElementById('why-section').scrollIntoView({behavior:'smooth'})">Why Us</a>
+    <a class="nav-link" onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})">Features</a>
+    <a class="nav-link" onclick="document.getElementById('pricing-section').scrollIntoView({behavior:'smooth'})">Pricing</a>
+    <a class="nav-link" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'})">How It Works</a>
+  </div>
+  <div class="nav-ctas">
+    <button class="btn-outline" style="padding:9px 20px;font-size:13px" onclick="showDemo()">👁 Demo</button>
+    <button class="btn-purple" style="padding:9px 20px;font-size:13px" onclick="showAuth()">Sign In</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="orb orb-tl"></div>
+  <div class="orb orb-tr"></div>
+  <div class="hero-light-lines">
+    <div class="lline" style="width:65%;top:35%;left:-10%;animation-duration:8s;animation-delay:0s"></div>
+    <div class="lline" style="width:80%;top:50%;left:-20%;animation-duration:10s;animation-delay:2s;opacity:0.6"></div>
+    <div class="lline" style="width:50%;top:22%;left:15%;animation-duration:12s;animation-delay:4s;opacity:0.4"></div>
+    <div class="lline" style="width:70%;top:68%;left:-5%;animation-duration:9s;animation-delay:6s;opacity:0.35"></div>
+  </div>
+
+  <div class="badge-new fade-up-1" style="margin-bottom:28px">
+    <div class="badge-dot"></div>
+    Now with AI-Powered CA Analysis — 100% Free
+  </div>
+  <h1 class="hero-h1 fade-up-2">Your Books.<br/><span class="grad">Automated.</span></h1>
+  <p class="hero-sub fade-up-3">AutoBooks CA connects with every billing app — Vyapar, Tally, Zoho — and automatically posts double-entry journals, GST reports, P&amp;L and more. Built for Indian shopkeepers by Kalbi Solutions.</p>
+  <div class="hero-ctas fade-up-4">
+    <button class="btn-purple" style="font-size:16px;padding:15px 32px" onclick="showAuth()">🚀 Get Started Free</button>
+    <button class="btn-outline" style="font-size:16px;padding:14px 30px" onclick="showDemo()">👁 Try Demo</button>
+  </div>
+
+  <!-- dashboard preview -->
+  <div class="dash-preview-wrap fade-up-4" style="animation-delay:0.6s">
+    <div class="dash-preview-glow"></div>
+    <div class="dash-preview-img" style="background:rgba(13,0,32,0.9);padding:16px">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="width:10px;height:10px;border-radius:50%;background:#f43f5e"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#f59e0b"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#22c55e"></div>
+        <span style="font-size:11px;color:var(--t4);margin-left:8px">Pages / Dashboard</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+        <div style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Sales</div>
+          <div style="font-size:18px;font-weight:800;color:#22c55e;font-family:var(--mono)">₹29,000</div>
+        </div>
+        <div style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Net Profit</div>
+          <div style="font-size:18px;font-weight:800;color:#22c55e;font-family:var(--mono)">₹13,500</div>
+        </div>
+        <div style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">GST Due</div>
+          <div style="font-size:18px;font-weight:800;color:#f97316;font-family:var(--mono)">₹4,320</div>
+        </div>
+        <div style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Receivables</div>
+          <div style="font-size:18px;font-weight:800;color:#3b82f6;font-family:var(--mono)">₹14,160</div>
+        </div>
+      </div>
+      <div style="height:60px;background:linear-gradient(180deg,rgba(124,58,237,0.2),rgba(124,58,237,0.05));border-radius:8px;position:relative;overflow:hidden">
+        <svg width="100%" height="100%" viewBox="0 0 800 60" preserveAspectRatio="none">
+          <path d="M0,50 Q100,10 200,30 T400,20 T600,35 T800,15" stroke="#a855f7" stroke-width="2" fill="none"/>
+          <path d="M0,50 Q100,10 200,30 T400,20 T600,35 T800,15 L800,60 L0,60Z" fill="url(#pg)"/>
+          <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7c3aed" stop-opacity="0.3"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></linearGradient></defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos-strip">
+  <div class="logos-inner">
+    <span class="logo-item">vyapar</span>
+    <span class="logo-item">Tally Prime</span>
+    <span class="logo-item">Zoho Books</span>
+    <span class="logo-item">Busy Accounting</span>
+    <span class="logo-item">Petpooja</span>
+    <span class="logo-item">QuickBooks</span>
+    <span class="logo-item">GoFrugal</span>
+  </div>
+</div>
+
+<!-- ── SECTION: WHY WE BUILT THIS ── -->
+<section class="section" id="why-section">
+  <div class="orb orb-tl" style="opacity:0.5"></div>
+  <div class="section-inner">
+    <div class="split-section">
+      <div class="split-img-wrap">
+        <img src="https://framerusercontent.com/images/pYSbvYf2nrWdentD8beEvXm64c.jpg" alt="Shop owner managing accounts" loading="lazy"/>
+      </div>
+      <div class="split-text">
+        <div class="section-label">Our Story</div>
+        <h2 class="section-title">Why We Built AutoBooks CA</h2>
+        <p>Every day, millions of small shop owners across India spend hours manually entering bills, reconciling ledgers, and struggling to file GST — tasks that a Chartered Accountant would charge thousands of rupees a month to handle.</p>
+        <p>We at <strong style="color:#c4b5fd">Kalbi Solutions Pvt. Ltd.</strong> built AutoBooks CA because we believe every shopkeeper deserves the same financial clarity that large businesses get. Whether you run a grocery store, electronics shop, medical store, or restaurant — your books should work for you, not against you.</p>
+        <p>AutoBooks CA takes every bill you generate — from any source — and automatically creates double-entry journal entries, calculates GST, updates your ledger, and gives you a real-time P&amp;L statement. It's your CA, always on, always available, completely free.</p>
+        <div class="split-chips">
+          <span class="chip">Double-Entry Bookkeeping</span>
+          <span class="chip">Auto GST Calculation</span>
+          <span class="chip">Real-Time P&L</span>
+          <span class="chip">100% Free</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Billing Connectors -->
+    <div class="split-section reverse" id="connectors-section">
+      <div class="split-img-wrap">
+        <img src="https://framerusercontent.com/images/8Cu4716GR06lWNpQFGDHnXB8sFA.png" alt="Billing app integration dashboard" loading="lazy" style="object-fit:contain;background:#0d0020;padding:20px"/>
+      </div>
+      <div class="split-text">
+        <div class="section-label">Universal Connectors</div>
+        <h2 class="section-title">Connect Every Billing App You Already Use</h2>
+        <p>You don't need to switch your billing software. AutoBooks CA works with whatever you're already using — through four powerful methods designed for real-world Indian shopkeepers.</p>
+        <p><strong style="color:#c4b5fd">CSV / Excel Import</strong> — Export your sales register from Vyapar, Tally, Busy, Marg, or Zoho as a CSV file. Upload it to AutoBooks and every transaction is instantly booked with proper debit/credit entries and GST split. Column mapping is automatic and customisable.</p>
+        <p><strong style="color:#c4b5fd">Tally XML Import</strong> — If you use Tally Prime or ERP 9, simply export your Day Book as XML (Gateway → Display → Day Book → Export) and paste it into AutoBooks. All vouchers are parsed and posted in seconds.</p>
+        <p><strong style="color:#c4b5fd">WhatsApp / SMS Bill Parser</strong> — Received a bill on WhatsApp? Just paste the message text into our AI parser and it automatically extracts the vendor name, amount, bill number and books the entry — no manual typing required.</p>
+        <p><strong style="color:#c4b5fd">Live API Webhooks</strong> — For real-time automation, configure your billing app to POST to our webhook endpoint after every sale or purchase. AutoBooks books it instantly as it happens.</p>
+        <div class="split-chips">
+          <span class="chip">Vyapar</span><span class="chip">Tally</span><span class="chip">Zoho</span><span class="chip">Busy</span><span class="chip">Petpooja</span><span class="chip">WhatsApp</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: AI CA Analysis -->
+    <div class="split-section">
+      <div class="split-img-wrap">
+        <img src="https://framerusercontent.com/images/V8GOAUGtzKypduVlUZKDAueA.png" alt="AI financial analysis visualization" loading="lazy" style="object-fit:contain;background:#0d0020;padding:20px"/>
+      </div>
+      <div class="split-text">
+        <div class="section-label">AI Intelligence</div>
+        <h2 class="section-title">Your AI CA — Analysis at CA-Level Depth</h2>
+        <p>Beyond bookkeeping, AutoBooks CA includes an AI-powered Chartered Accountant assistant that analyses your actual financial data and gives you sharp, actionable advice — just like a CA sitting across the table from you.</p>
+        <p>The AI looks at your real numbers — sales, purchases, expenses, receivables, payables — and generates insights on <strong style="color:#c4b5fd">GST filing status</strong>, <strong style="color:#c4b5fd">cash flow health</strong>, <strong style="color:#c4b5fd">profit margin trends</strong>, <strong style="color:#c4b5fd">pending payment risks</strong> and gives you one sharp recommendation to act on immediately.</p>
+        <p style="padding:14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#fbbf24;margin-top:8px">
+          <strong>⚡ How it works:</strong> The AI analysis uses the Anthropic Claude API. You bring your own free API key from <strong>console.anthropic.com</strong> — it's entered once in the app and stored only in your browser session. We never see or store your API key on our servers.
+        </p>
+        <div class="split-chips">
+          <span class="chip">GST Analysis</span><span class="chip">Cash Flow</span><span class="chip">Risk Flags</span><span class="chip">Profit Insights</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Privacy & API -->
+    <div class="split-section reverse">
+      <div class="split-img-wrap">
+        <img src="https://framerusercontent.com/images/dBZrTx35QSZYVplhtUkftF3TR9U.png" alt="Data privacy and security" loading="lazy" style="object-fit:contain;background:#0d0020;padding:20px"/>
+      </div>
+      <div class="split-text">
+        <div class="section-label">Privacy First</div>
+        <h2 class="section-title">Your Financial Data Stays Completely Private</h2>
+        <p>We designed AutoBooks CA with a privacy-first architecture. Your financial data — every invoice, every journal entry, every ledger balance — is processed entirely within your browser and never transmitted to our servers.</p>
+        <p>When you use the AI CA analysis feature, you enter your own Anthropic API key. This key is stored only in your current browser session memory. It is erased the moment you close or refresh the tab. Kalbi Solutions never receives, logs, or stores your API key or financial data.</p>
+        <p>Your accounting data belongs to you. Export it at any time. Delete it at any time. We have no access to it, period.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2)"><span style="color:#22c55e;font-weight:700">✓</span> All data processed in your browser only</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2)"><span style="color:#22c55e;font-weight:700">✓</span> API key stored in session memory only — never on our servers</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2)"><span style="color:#22c55e;font-weight:700">✓</span> No tracking, no analytics on your financial data</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2)"><span style="color:#22c55e;font-weight:700">✓</span> You own your data — export or delete any time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Smart Payments -->
+    <div class="split-section">
+      <div class="split-img-wrap">
+        <img src="https://framerusercontent.com/images/jY1bNRxtCtgYiLQJNT83iC4xwBU.png" alt="Smart vendor payments" loading="lazy" style="object-fit:contain;background:#0d0020;padding:20px"/>
+      </div>
+      <div class="split-text">
+        <div class="section-label">Smart Payments</div>
+        <h2 class="section-title">Pay Vendors Directly From Your Books</h2>
+        <p>AutoBooks CA tracks every pending vendor payment and lets you settle it without leaving the app. When a purchase bill is due, simply tap <strong style="color:#c4b5fd">"Pay Now"</strong> — choose your preferred method and AutoBooks handles the rest.</p>
+        <p><strong style="color:#c4b5fd">UPI QR Code</strong> — Enter the vendor's UPI ID or mobile number and AutoBooks generates a QR code instantly. Open PhonePe, Google Pay, Paytm, or BHIM and scan it. On mobile, tap "Open UPI App" for a direct payment deep-link. The vendor's UPI details are saved for next time — one tap to pay again.</p>
+        <p><strong style="color:#c4b5fd">Bank Transfer / NEFT</strong> — Enter account number and IFSC once, get copy-ready payment details every time. <strong style="color:#c4b5fd">Cheque</strong> — AutoBooks even writes the amount in words (e.g. "Twenty Five Thousand Rupees Only") for you. Every payment is automatically booked as a journal entry in your ledger.</p>
+        <div class="split-chips">
+          <span class="chip">UPI QR</span><span class="chip">PhonePe</span><span class="chip">Google Pay</span><span class="chip">NEFT/IMPS</span><span class="chip">Cheque</span><span class="chip">Net Banking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES GRID -->
+<section class="section" id="features-section" style="padding-top:60px">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:56px">
+      <div class="section-label" style="text-align:center">Everything Included</div>
+      <h2 class="section-title" style="text-align:center">Built to Simplify Tasks</h2>
+      <p style="font-size:16px;color:var(--t2);max-width:480px;margin:0 auto;line-height:1.7;text-align:center">Every feature a CA would charge for — automated, instant, and completely free for Indian shopkeepers.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="glass-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Real-Time Dashboard</div>
+        <p class="feat-desc">Live sales, purchases, expenses, GST payable, receivables and payables — always up to date as you add transactions.</p>
+      </div>
+      <div class="glass-card">
+        <div class="feat-icon">📋</div>
+        <div class="feat-title">Double-Entry Journals</div>
+        <p class="feat-desc">Every bill automatically creates proper debit/credit journal entries across 13 accounts following Indian accounting standards.</p>
+      </div>
+      <div class="glass-card">
+        <div class="feat-icon">📒</div>
+        <div class="feat-title">Account Ledger</div>
+        <p class="feat-desc">Drill into any account — Cash, Bank, Sales, Purchases, GST — and see every movement with running balance.</p>
+      </div>
+      <div class="glass-card">
+        <div class="feat-icon">⚖️</div>
+        <div class="feat-title">Trial Balance</div>
+        <p class="feat-desc">Auto-computed trial balance confirms your books are balanced. Debit always equals credit — mathematically guaranteed.</p>
+      </div>
+      <div class="glass-card">
+        <div class="feat-icon">📈</div>
+        <div class="feat-title">P&L Statement</div>
+        <p class="feat-desc">Gross profit, operating expenses, net profit — your Profit & Loss statement updates live with every transaction you enter.</p>
+      </div>
+      <div class="glass-card">
+        <div class="feat-icon">🧾</div>
+        <div class="feat-title">Auto GST Calculation</div>
+        <p class="feat-desc">18% GST split into input credit and payable automatically. Know your net GST liability at a glance before every filing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-section" style="padding-top:60px">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="text-align:center">Get Started in Minutes</div>
+      <h2 class="section-title" style="text-align:center">How AutoBooks Works</h2>
+    </div>
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-num">01</div>
+        <div class="step-title">Sign Up Free</div>
+        <p class="step-desc">Create your account with email or Google — takes 30 seconds, no credit card needed</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">02</div>
+        <div class="step-title">Connect Your App</div>
+        <p class="step-desc">Upload CSV from Vyapar/Tally, paste Tally XML, use AI parser, or configure live webhook</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">03</div>
+        <div class="step-title">Run AI Analysis</div>
+        <p class="step-desc">Add your free Anthropic API key once and get CA-quality insights on your actual numbers</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">04</div>
+        <div class="step-title">Get Smart Insights</div>
+        <p class="step-desc">GST status, cash flow health, profit margins, vendor risk — all in one clean dashboard</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing-section" style="padding-top:60px">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="text-align:center">Pricing</div>
+      <h2 class="section-title" style="text-align:center">100% Free.<br/>Always.</h2>
+      <p style="font-size:16px;color:var(--t2);max-width:480px;margin:12px auto 0;line-height:1.7;text-align:center">AutoBooks CA is completely free to use. We believe every shopkeeper deserves access to professional-grade bookkeeping tools, regardless of their size or budget. No hidden charges, no freemium limits, no trial periods.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-badge">For Solo Shops</div>
+        <div class="price-name">AutoBooks Free</div>
+        <div class="price-desc">Full features for single-owner shops and small retailers</div>
+        <div class="price-free">₹0</div>
+        <div style="font-size:13px;color:var(--t3);margin-top:4px">Forever. No credit card.</div>
+        <ul class="price-features">
+          <li>Unlimited transactions</li>
+          <li>All 5 integration methods</li>
+          <li>Double-entry bookkeeping</li>
+          <li>GST auto-calculation</li>
+          <li>P&L, Ledger, Trial Balance</li>
+          <li>CSV / Tally / AI import</li>
+          <li>Pay vendors via UPI</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">✨ Most Popular</div>
+        <div class="price-name">AutoBooks + AI</div>
+        <div class="price-desc">Everything free, plus AI CA analysis using your own API key</div>
+        <div class="price-free">₹0</div>
+        <div style="font-size:13px;color:var(--t3);margin-top:4px">Bring your own Anthropic API key</div>
+        <ul class="price-features">
+          <li>Everything in Free plan</li>
+          <li>AI-powered CA analysis</li>
+          <li>GST advice & risk flags</li>
+          <li>Cash flow insights</li>
+          <li>Profit margin analysis</li>
+          <li>Vendor payment risk alerts</li>
+          <li>Your API key = your privacy</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-badge">Market Comparison</div>
+        <div class="price-name">Competitors</div>
+        <div class="price-desc">What others charge for similar features</div>
+        <div class="price-amount" style="color:var(--t2)">₹2,000<span>/mo</span></div>
+        <div style="font-size:13px;color:var(--t3);margin-top:4px">Avg. for CA + accounting software</div>
+        <ul class="price-features" style="opacity:0.5">
+          <li>CA retainer: ₹1,500–5,000/mo</li>
+          <li>Tally subscription: ₹18,000/yr</li>
+          <li>Zoho Books: ₹999+/mo</li>
+          <li>QuickBooks: ₹1,499/mo</li>
+          <li>Manual entry: hours per week</li>
+          <li>GST filing errors: costly</li>
+          <li>No real-time insights</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding-top:60px;padding-bottom:80px">
+  <div class="section-inner">
+    <div class="cta-box">
+      <div class="cta-glow"></div>
+      <div class="section-label" style="text-align:center">Start Today</div>
+      <h2 class="section-title" style="text-align:center;letter-spacing:-2px;margin-bottom:16px">Your Books. Automated.<br/>Your CA. On Demand.</h2>
+      <p style="font-size:16px;color:var(--t2);max-width:480px;margin:0 auto 36px;line-height:1.7;text-align:center">Join thousands of Indian shopkeepers who have automated their bookkeeping with AutoBooks CA — completely free.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-purple" style="font-size:16px;padding:15px 36px" onclick="showAuth()">🚀 Create Free Account</button>
+        <button class="btn-outline" onclick="showDemo()">👁 View Demo First</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <span style="font-size:15px;font-weight:700;color:var(--t1)">AutoBooks CA</span>
+  </div>
+  <div class="footer-brand">Made by Kalbi Solutions Pvt. Ltd.</div>
+  <div class="footer-copy">© 2025 · All rights reserved · privacy@kalbisolutions.in</div>
+</footer>
+</div><!-- end landing-page -->
+
+
+<!-- ════════════════════════════════════════
+     AUTH PAGE
+════════════════════════════════════════ -->
+<div id="auth-page" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px;background:var(--bg);position:relative;overflow:hidden">
+  <div class="orb orb-tl"></div>
+  <div class="orb orb-br"></div>
+  <div class="grid-bg" style="position:fixed;inset:0;z-index:0"></div>
+
+  <div class="auth-wrap" style="position:relative;z-index:1">
+    <!-- Back link -->
+    <div onclick="showLanding()" style="display:flex;align-items:center;gap:8px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;margin-bottom:24px;width:fit-content;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--t2)'">
+      ← Back to Home
+    </div>
+
+    <div class="auth-card">
+      <!-- Logo -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">
+        <div style="background:linear-gradient(135deg,#7c3aed,#3b82f6);width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px rgba(124,58,237,0.45)">⚡</div>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.3px">AutoBooks CA</div>
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px">by Kalbi Solutions</div>
+        </div>
+      </div>
+
+      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:4px" id="auth-heading">Welcome Back</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:28px" id="auth-subheading">Sign in to your AutoBooks CA account</div>
+
+      <!-- Google Sign In -->
+      <button class="google-btn" onclick="signInGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider"><span>or with email</span></div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login">
+        <div style="margin-bottom:14px">
+          <label class="auth-lbl">Email Address</label>
+          <input class="auth-input" type="email" id="l-email" placeholder="you@company.com"/>
+        </div>
+        <div style="margin-bottom:16px">
+          <label class="auth-lbl">Password</label>
+          <input class="auth-input" type="password" id="l-pass" placeholder="••••••••"/>
+        </div>
+        <label style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;cursor:pointer">
+          <input type="checkbox" id="l-agree" style="margin-top:3px;accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0"/>
+          <span style="font-size:12px;color:var(--t2);line-height:1.6">I agree to the <a href="#" onclick="openPrivacy(event)" style="color:#a855f7;text-decoration:none">Privacy Policy</a> & <a href="#" onclick="openPrivacy(event)" style="color:#a855f7;text-decoration:none">Terms of Service</a> of Kalbi Solutions Pvt. Ltd.</span>
+        </label>
+        <button class="auth-btn" onclick="doSignIn()">Sign In →</button>
+        <div class="auth-switch">Don't have an account? <a onclick="toggleAuthForm()">Create one free</a></div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="form-register" style="display:none">
+        <div style="margin-bottom:12px">
+          <label class="auth-lbl">Full Name</label>
+          <input class="auth-input" type="text" id="r-name" placeholder="Your Name"/>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="auth-lbl">Email Address</label>
+          <input class="auth-input" type="email" id="r-email" placeholder="you@company.com"/>
+        </div>
+        <div style="margin-bottom:16px">
+          <label class="auth-lbl">Password</label>
+          <input class="auth-input" type="password" id="r-pass" placeholder="Minimum 8 characters"/>
+        </div>
+        <label style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;cursor:pointer">
+          <input type="checkbox" id="r-agree" style="margin-top:3px;accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0"/>
+          <span style="font-size:12px;color:var(--t2);line-height:1.6">I agree to the <a href="#" onclick="openPrivacy(event)" style="color:#a855f7;text-decoration:none">Privacy Policy</a> & <a href="#" onclick="openPrivacy(event)" style="color:#a855f7;text-decoration:none">Terms of Service</a>. I understand AutoBooks CA is AI-assisted and not a substitute for a licensed CA.</span>
+        </label>
+        <button class="auth-btn" onclick="doRegister()">Create Free Account →</button>
+        <div class="auth-switch">Already have an account? <a onclick="toggleAuthForm()">Sign in</a></div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
+        <button onclick="showDemo()" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;font-family:var(--font);transition:color 0.2s" onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">
+          👁 Try the demo without signing in
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PRIVACY MODAL
+════════════════════════════════════════ -->
+<div id="privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:900;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)">
+  <div class="privacy-box">
+    <h2 style="color:#fff;margin-bottom:4px">Privacy Policy</h2>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:20px">Effective: January 1, 2025 · Kalbi Solutions Pvt. Ltd.</div>
+    <p>This Privacy Policy describes how Kalbi Solutions Pvt. Ltd. ("we", "us") collects, uses, and protects your information when you use AutoBooks CA.</p>
+    <h3>1. Information We Collect</h3>
+    <ul>
+      <li>Account info: name and email address when you register</li>
+      <li>Financial data you enter (invoices, transactions, journal entries)</li>
+      <li>Usage data: features used, session duration, device type</li>
+    </ul>
+    <h3>2. How We Use Your Data</h3>
+    <ul>
+      <li>To provide and improve the AutoBooks CA service</li>
+      <li>To generate AI-powered financial analysis via Anthropic Claude</li>
+      <li>To send important service and security notifications</li>
+    </ul>
+    <h3>3. Data Security — Your API Key</h3>
+    <p>All financial data is processed in your browser only and never stored on our servers. Your Anthropic API key is stored in session memory only — it is erased when you close or refresh the tab. We never see or store it.</p>
+    <h3>4. GST & Tax Disclaimer</h3>
+    <p>AutoBooks CA provides AI-assisted bookkeeping. Always verify with a licensed CA before filing GST returns or income tax. We are not liable for tax filings made using this tool.</p>
+    <h3>5. Contact Us</h3>
+    <p>privacy@kalbisolutions.in</p>
+    <button onclick="closePrivacy()" style="margin-top:20px;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)">I Understand & Close</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     DEMO BANNER
+════════════════════════════════════════ -->
+<div id="demo-banner" style="display:none;background:linear-gradient(90deg,rgba(124,58,237,0.22),rgba(147,51,234,0.12));border-bottom:1px solid rgba(124,58,237,0.3);padding:10px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:relative;z-index:200">
+  <span style="color:rgba(255,255,255,0.75);font-size:13px">👁 <strong style="color:#c4b5fd">Demo Mode</strong> — Sample data loaded so you can explore every feature. Sign in to start with your own blank account.</span>
+  <button onclick="showAuth()" style="padding:7px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 0 12px rgba(124,58,237,0.4)">Sign In to Save →</button>
+</div>
+
+<!-- ════════════════════════════════════════
+     REACT APP ROOT
+════════════════════════════════════════ -->
+<div id="root" style="display:none"></div>
+
+<!-- ════════════════════════════════════════
+     PAGE NAVIGATION JS
+════════════════════════════════════════ -->
+<script>
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+
+function showLanding(){
+  document.getElementById('landing-page').style.display='block';
+  document.getElementById('auth-page').style.display='none';
+  document.getElementById('root').style.display='none';
+  document.getElementById('demo-banner').style.display='none';
+  document.getElementById('main-nav').style.display='flex';
+  window.scrollTo(0,0);
+}
+function showAuth(){
+  document.getElementById('auth-heading').textContent='Welcome Back';
+  document.getElementById('auth-subheading').textContent='Sign in to your AutoBooks CA account';
+  document.getElementById('form-login').style.display='block';
+  document.getElementById('form-register').style.display='none';
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('auth-page').style.display='flex';
+  document.getElementById('root').style.display='none';
+  document.getElementById('demo-banner').style.display='none';
+  document.getElementById('main-nav').style.display='none';
+}
+function showDemo(){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('auth-page').style.display='none';
+  document.getElementById('demo-banner').style.display='flex';
+  document.getElementById('root').style.display='block';
+  document.getElementById('main-nav').style.display='none';
+  if(window._renderApp) window._renderApp(true);
+  else setTimeout(()=>{if(window._renderApp)window._renderApp(true);},500);
+}
+function goToApp(){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('auth-page').style.display='none';
+  document.getElementById('demo-banner').style.display='none';
+  document.getElementById('root').style.display='block';
+  document.getElementById('main-nav').style.display='none';
+  if(window._renderApp) window._renderApp(false);
+  else setTimeout(()=>{if(window._renderApp)window._renderApp(false);},500);
+}
+
+function toggleAuthForm(){
+  const l=document.getElementById('form-login');
+  const r=document.getElementById('form-register');
+  if(l.style.display==='none'){
+    l.style.display='block';r.style.display='none';
+    document.getElementById('auth-heading').textContent='Welcome Back';
+    document.getElementById('auth-subheading').textContent='Sign in to your AutoBooks CA account';
+  }else{
+    l.style.display='none';r.style.display='block';
+    document.getElementById('auth-heading').textContent='Create Free Account';
+    document.getElementById('auth-subheading').textContent='Join thousands of shopkeepers on AutoBooks CA';
+  }
+}
+function signInGoogle(){goToApp();}
+function doSignIn(){
+  const email=document.getElementById('l-email').value;
+  const pass=document.getElementById('l-pass').value;
+  const agreed=document.getElementById('l-agree').checked;
+  if(!email||!pass){alert('Please enter your email and password.');return;}
+  if(!agreed){alert('Please agree to the Privacy Policy to continue.');return;}
+  goToApp();
+}
+function doRegister(){
+  const name=document.getElementById('r-name').value;
+  const email=document.getElementById('r-email').value;
+  const pass=document.getElementById('r-pass').value;
+  const agreed=document.getElementById('r-agree').checked;
+  if(!name||!email||!pass){alert('Please fill in all fields.');return;}
+  if(!agreed){alert('Please agree to the Privacy Policy to continue.');return;}
+  if(pass.length<8){alert('Password must be at least 8 characters.');return;}
+  goToApp();
+}
+function openPrivacy(e){e&&e.preventDefault();const m=document.getElementById('privacy-modal');m.style.display='flex';}
+function closePrivacy(){document.getElementById('privacy-modal').style.display='none';}
+
+// Kalbi intro animation (session-once)
+(function(){
+  const shown=sessionStorage.getItem('kalbi_intro_v2');
+  if(!shown){
+    sessionStorage.setItem('kalbi_intro_v2','1');
+    const ov=document.createElement('div');
+    ov.id='kalbi-intro';
+    ov.style.cssText='position:fixed;inset:0;background:#06000f;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none';
+    ov.innerHTML='<div style="font-size:clamp(28px,6vw,72px);font-weight:900;background:linear-gradient(135deg,#fff 0%,#c4b5fd 50%,#818cf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1.5px;text-align:center;animation:kalbi-anim 3.4s cubic-bezier(0.4,0,0.2,1) forwards;font-family:Outfit,sans-serif">Kalbi Solutions Pvt. Ltd.</div>';
+    const st=document.createElement('style');
+    st.textContent='@keyframes kalbi-anim{0%{opacity:0;transform:scale(0.5) translateY(20px)}15%{opacity:1;transform:scale(1) translateY(0)}65%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.12) translateY(calc(50vh - 28px))}}';
+    document.head.appendChild(st);
+    document.body.appendChild(ov);
+    setTimeout(()=>ov.remove(),3600);
+  }
+})();
+</script>
+
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+// ── ACCOUNTING ENGINE ─────────────────────────────────────────────────
+const GST=0.18;
+const ACCOUNTS={
+  CASH:{code:"1001",name:"Cash in Hand",type:"Asset"},
+  BANK:{code:"1002",name:"Bank Account",type:"Asset"},
+  RECEIVABLE:{code:"1003",name:"Accounts Receivable",type:"Asset"},
+  INVENTORY:{code:"1004",name:"Stock / Inventory",type:"Asset"},
+  PAYABLE:{code:"2001",name:"Accounts Payable",type:"Liability"},
+  GST_PAY:{code:"2002",name:"GST Payable",type:"Liability"},
+  GST_INPUT:{code:"2003",name:"GST Input Credit",type:"Asset"},
+  CAPITAL:{code:"3001",name:"Owner's Capital",type:"Equity"},
+  SALES:{code:"4001",name:"Sales Revenue",type:"Revenue"},
+  PURCHASE:{code:"5001",name:"Purchases",type:"Expense"},
+  SALARY:{code:"5002",name:"Salary Expense",type:"Expense"},
+  RENT:{code:"5003",name:"Rent Expense",type:"Expense"},
+  MISC:{code:"5004",name:"Miscellaneous Exp.",type:"Expense"},
+};
+const TYPE_LABELS={SALE_CASH:"Sale (Cash)",SALE_CREDIT:"Sale (Credit)",PURCHASE_CASH:"Purchase (Cash)",PURCHASE_CREDIT:"Purchase (Credit)",EXPENSE:"Expense",RECEIPT:"Receipt",PAYMENT:"Payment"};
+const TYPE_COLORS={SALE_CASH:"#22c55e",SALE_CREDIT:"#86efac",PURCHASE_CASH:"#f97316",PURCHASE_CREDIT:"#fdba74",EXPENSE:"#f43f5e",RECEIPT:"#3b82f6",PAYMENT:"#a78bfa"};
+const SRC_COLORS={AUTO:"#fbbf24",MANUAL:"#93c5fd",CSV:"#22c55e",TALLY:"#f97316",AI_PARSE:"#a855f7",DEMO:"#64748b"};
+
+function makeEntries(bill){
+  const amt=bill.amount,gst=parseFloat((amt*GST).toFixed(2)),tot=parseFloat((amt+gst).toFixed(2)),e=[];
+  if(bill.type==="SALE_CASH"){e.push({account:"CASH",dr:tot,cr:0});e.push({account:"SALES",dr:0,cr:amt});e.push({account:"GST_PAY",dr:0,cr:gst});}
+  else if(bill.type==="SALE_CREDIT"){e.push({account:"RECEIVABLE",dr:tot,cr:0});e.push({account:"SALES",dr:0,cr:amt});e.push({account:"GST_PAY",dr:0,cr:gst});}
+  else if(bill.type==="PURCHASE_CASH"){e.push({account:"PURCHASE",dr:amt,cr:0});e.push({account:"GST_INPUT",dr:gst,cr:0});e.push({account:"CASH",dr:0,cr:tot});}
+  else if(bill.type==="PURCHASE_CREDIT"){e.push({account:"PURCHASE",dr:amt,cr:0});e.push({account:"GST_INPUT",dr:gst,cr:0});e.push({account:"PAYABLE",dr:0,cr:tot});}
+  else if(bill.type==="EXPENSE"){const a=bill.expenseAccount||"MISC";e.push({account:a,dr:amt,cr:0});e.push({account:"CASH",dr:0,cr:amt});}
+  else if(bill.type==="RECEIPT"){e.push({account:"BANK",dr:amt,cr:0});e.push({account:"RECEIVABLE",dr:0,cr:amt});}
+  else if(bill.type==="PAYMENT"){e.push({account:"PAYABLE",dr:amt,cr:0});e.push({account:"BANK",dr:0,cr:amt});}
+  return e;
+}
+let gid=100;
+const makeTx=(bill,src)=>({id:++gid,date:new Date().toISOString(),billNo:bill.billNo||"TX-"+gid,party:bill.party||"—",type:bill.type,amount:bill.amount,narration:bill.narration,source:src||"MANUAL",expenseAccount:bill.expenseAccount,journalEntries:makeEntries(bill),paid:false});
+const computeBal=txs=>{const b={};Object.keys(ACCOUNTS).forEach(k=>b[k]=0);txs.forEach(tx=>tx.journalEntries.forEach(e=>{b[e.account]=(b[e.account]||0)+e.dr-e.cr;}));return b;};
+const fmt=n=>"₹"+Math.abs(n).toLocaleString("en-IN",{minimumFractionDigits:2});
+const fmtD=iso=>new Date(iso).toLocaleDateString("en-IN",{day:"2-digit",month:"short"});
+
+const DEMO=[
+  {type:"SALE_CASH",amount:4500,narration:"Sale: Mobile Covers + Screen Guards",billNo:"INV-1001",party:"Walk-in Customer"},
+  {type:"SALE_CREDIT",amount:12000,narration:'Sale: Samsung TV 32"',billNo:"INV-1002",party:"Ramesh Electronics"},
+  {type:"PURCHASE_CREDIT",amount:25000,narration:"Stock Purchase: Electronics Batch",billNo:"PUR-501",party:"Raj Distributors"},
+  {type:"PURCHASE_CREDIT",amount:40000,narration:"Stock Purchase: Smartphones",billNo:"PUR-502",party:"Galaxy Wholesale"},
+  {type:"EXPENSE",amount:8000,narration:"Monthly Shop Rent",billNo:"RENT-03",party:"Landlord",expenseAccount:"RENT"},
+  {type:"SALE_CASH",amount:6500,narration:"Sale: Earphones + Cables",billNo:"INV-1003",party:"Walk-in"},
+].map(b=>makeTx(b,"DEMO"));
+
+// ── STYLES HELPERS ────────────────────────────────────────────────────
+const INP={background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:10,padding:"11px 14px",color:"#e2e8f0",fontSize:15,width:"100%"};
+const LBL={fontSize:11,color:"#64748b",display:"block",marginBottom:5,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.8px"};
+const BTN=(color,bg)=>({padding:"13px 20px",borderRadius:10,border:"none",background:bg||"linear-gradient(135deg,#7c3aed,#6d28d9)",color:"white",boxShadow:"0 0 16px rgba(124,58,237,0.35)",fontSize:14,fontWeight:700,cursor:"pointer",width:"100%",marginTop:6});
+
+// ── MODAL ─────────────────────────────────────────────────────────────
+function Modal({title,onClose,children}){
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"rgba(6,0,15,0.97)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"20px 20px 0 0",width:"100%",maxWidth:580,maxHeight:"93vh",overflowY:"auto",padding:"0 16px 20px",paddingBottom:"max(20px,env(safe-area-inset-bottom))"}}>
+        <div style={{width:40,height:4,background:"rgba(255,255,255,0.15)",borderRadius:2,margin:"12px auto 14px"}}/>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:16,alignItems:"center"}}>
+          <span style={{fontSize:16,fontWeight:700,color:"#f1f5f9"}}>{title}</span>
+          <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"none",color:"#94a3b8",width:32,height:32,borderRadius:"50%",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── API KEY SETUP MODAL ───────────────────────────────────────────────
+function APIKeyModal({onSave,onClose}){
+  const [key,setKey]=useState("");
+  const [show,setShow]=useState(false);
+  return(
+    <Modal title="🔑 Set Anthropic API Key" onClose={onClose}>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        <div style={{padding:14,background:"rgba(245,158,11,0.08)",borderRadius:10,border:"1px solid rgba(245,158,11,0.2)",fontSize:13,color:"#fbbf24",lineHeight:1.7}}>
+          ⚡ <strong>Why is this needed?</strong><br/>
+          When running as a local HTML file (not inside Claude.ai), the AI analysis requires your own Anthropic API key to connect. Your key is stored only in this browser session — never sent anywhere else.
+        </div>
+        <div>
+          <label style={LBL}>Your Anthropic API Key</label>
+          <div style={{display:"flex",gap:8}}>
+            <input type={show?"text":"password"} value={key} onChange={e=>setKey(e.target.value)} style={{...INP,flex:1,fontFamily:"monospace",fontSize:13}} placeholder="sk-ant-api03-..."/>
+            <button onClick={()=>setShow(!show)} style={{padding:"11px 14px",borderRadius:10,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"#94a3b8",fontSize:13,flexShrink:0}}>
+              {show?"🙈":"👁"}
+            </button>
+          </div>
+        </div>
+        <div style={{fontSize:12,color:"#64748b",lineHeight:1.8}}>
+          <div>1. Go to <strong style={{color:"#93c5fd"}}>console.anthropic.com</strong></div>
+          <div>2. API Keys → Create new key</div>
+          <div>3. Copy and paste above</div>
+        </div>
+        <button onClick={()=>{if(key.startsWith("sk-")){onSave(key);onClose();}else alert("Key must start with sk-ant-...")}} style={{...BTN("#0a0f1e"),background:"linear-gradient(135deg,#7c3aed,#6d28d9)",color:"#fff"}}>
+          Save API Key & Analyse
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── PAY NOW MODAL ─────────────────────────────────────────────────────
+function PayNowModal({tx,vendors,onPaymentDone,onClose}){
+  const [method,setMethod]=useState("upi");
+  const [upiId,setUpiId]=useState("");
+  const [mobile,setMobile]=useState("");
+  const [name,setName]=useState(tx.party||"");
+  const [bankAcc,setBankAcc]=useState("");
+  const [ifsc,setIfsc]=useState("");
+  const [chequeNo,setChequeNo]=useState("");
+  const [ref,setRef]=useState("");
+  const [step,setStep]=useState(1); // 1=details, 2=qr/confirm
+  const [saved,setSaved]=useState(false);
+
+  // Load vendor info if exists
+  const vendor=vendors[tx.party]||{};
+  useEffect(()=>{
+    if(vendor.upiId) setUpiId(vendor.upiId);
+    if(vendor.mobile) setMobile(vendor.mobile);
+    if(vendor.bankAcc) setBankAcc(vendor.bankAcc);
+    if(vendor.ifsc) setIfsc(vendor.ifsc);
+    if(vendor.method) setMethod(vendor.method);
+  },[]);
+
+  const totalAmt=parseFloat((tx.amount*1.18).toFixed(2));
+  const upiString=`upi://pay?pa=${encodeURIComponent(upiId||mobile+"@paytm")}&pn=${encodeURIComponent(name)}&am=${totalAmt}&cu=INR&tn=${encodeURIComponent("Payment: "+tx.billNo)}`;
+  const qrUrl=`https://chart.googleapis.com/chart?cht=qr&chs=240x240&chl=${encodeURIComponent(upiString)}&choe=UTF-8`;
+
+  const METHODS=[
+    {id:"upi",icon:"📱",label:"UPI / QR Code",color:"#22c55e"},
+    {id:"mobile",icon:"📲",label:"Mobile Number UPI",color:"#3b82f6"},
+    {id:"bank",icon:"🏦",label:"Bank Transfer / NEFT",color:"#f59e0b"},
+    {id:"cheque",icon:"📝",label:"Cheque",color:"#a855f7"},
+    {id:"netbanking",icon:"💻",label:"Net Banking",color:"#f97316"},
+    {id:"cash",icon:"💵",label:"Cash",color:"#64748b"},
+  ];
+
+  return(
+    <Modal title={`💳 Pay: ${tx.party}`} onClose={onClose}>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        {/* Amount due */}
+        <div style={{padding:"12px 16px",background:"rgba(244,63,94,0.08)",borderRadius:10,border:"1px solid rgba(244,63,94,0.2)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div>
+            <div style={{fontSize:11,color:"#f43f5e",textTransform:"uppercase",letterSpacing:"1px"}}>Amount Due</div>
+            <div style={{fontSize:11,color:"#64748b",marginTop:2}}>{tx.billNo} · {tx.narration}</div>
+          </div>
+          <div style={{fontSize:22,fontWeight:800,color:"#f43f5e",fontFamily:"monospace"}}>{fmt(totalAmt)}</div>
+        </div>
+
+        {step===1&&(<>
+          {/* Payment method picker */}
+          <div>
+            <label style={LBL}>Payment Method</label>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+              {METHODS.map(m=>(
+                <button key={m.id} onClick={()=>setMethod(m.id)} style={{padding:"10px 6px",borderRadius:10,border:`1px solid ${method===m.id?m.color+"66":"rgba(255,255,255,0.08)"}`,background:method===m.id?m.color+"15":"rgba(255,255,255,0.02)",color:method===m.id?m.color:"#64748b",fontSize:11,fontWeight:600,display:"flex",flexDirection:"column",alignItems:"center",gap:4,cursor:"pointer",transition:"all 0.15s"}}>
+                  <span style={{fontSize:20}}>{m.icon}</span>{m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Vendor name */}
+          <div><label style={LBL}>Payee Name</label>
+            <input value={name} onChange={e=>setName(e.target.value)} style={INP} placeholder="Vendor / Party Name"/>
+          </div>
+
+          {/* UPI ID */}
+          {method==="upi"&&(<div><label style={LBL}>UPI ID</label>
+            <input value={upiId} onChange={e=>setUpiId(e.target.value)} style={INP} placeholder="vendor@upi or name@okaxis"/>
+          </div>)}
+
+          {/* Mobile UPI */}
+          {method==="mobile"&&(<div><label style={LBL}>Mobile Number (UPI linked)</label>
+            <input type="tel" inputMode="numeric" value={mobile} onChange={e=>setMobile(e.target.value.replace(/\D/g,"").slice(0,10))} style={INP} placeholder="10-digit mobile number"/>
+          </div>)}
+
+          {/* Bank Transfer */}
+          {method==="bank"&&(<>
+            <div><label style={LBL}>Account Number</label><input value={bankAcc} onChange={e=>setBankAcc(e.target.value)} style={INP} placeholder="Account number"/></div>
+            <div><label style={LBL}>IFSC Code</label><input value={ifsc} onChange={e=>setIfsc(e.target.value.toUpperCase())} style={INP} placeholder="e.g. SBIN0001234"/></div>
+          </>)}
+
+          {/* Cheque */}
+          {method==="cheque"&&(<div><label style={LBL}>Cheque Number</label>
+            <input value={chequeNo} onChange={e=>setChequeNo(e.target.value)} style={INP} placeholder="6-digit cheque number"/>
+          </div>)}
+
+          {/* Reference */}
+          <div><label style={LBL}>Payment Reference / Note (optional)</label>
+            <input value={ref} onChange={e=>setRef(e.target.value)} style={INP} placeholder="UTR / transaction ID / note"/>
+          </div>
+
+          <button onClick={()=>setStep(2)} style={{...BTN("#0a0f1e"),background:"linear-gradient(135deg,#7c3aed,#6d28d9)",color:"#fff"}}>
+            Continue →
+          </button>
+        </>)}
+
+        {step===2&&(<>
+          {/* UPI QR */}
+          {(method==="upi"||method==="mobile")&&(
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:14}}>
+              <div style={{padding:16,background:"white",borderRadius:16,display:"inline-block"}}>
+                <img src={qrUrl} alt="UPI QR" style={{width:200,height:200,display:"block"}} onError={e=>{e.target.style.display="none";}}/>
+              </div>
+              <div style={{textAlign:"center"}}>
+                <div style={{fontSize:13,color:"#94a3b8"}}>Scan with any UPI app</div>
+                <div style={{fontSize:12,color:"#475569",marginTop:4}}>PhonePe · Google Pay · Paytm · BHIM · Any UPI</div>
+              </div>
+              <div style={{padding:"10px 14px",background:"rgba(34,197,94,0.08)",borderRadius:10,border:"1px solid rgba(34,197,94,0.2)",width:"100%",textAlign:"center"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"#22c55e"}}>Pay To: {name}</div>
+                <div style={{fontSize:13,color:"#94a3b8",marginTop:2}}>{upiId||mobile+"@paytm"}</div>
+                <div style={{fontSize:18,fontWeight:800,color:"#e2e8f0",fontFamily:"monospace",marginTop:4}}>{fmt(totalAmt)}</div>
+              </div>
+              {/* Deep link for mobile */}
+              <a href={upiString} style={{display:"block",width:"100%",padding:"13px",borderRadius:10,background:"linear-gradient(135deg,#22c55e,#16a34a)",color:"white",fontSize:14,fontWeight:700,textAlign:"center",textDecoration:"none"}}>
+                📱 Open UPI App to Pay
+              </a>
+            </div>
+          )}
+
+          {/* Bank details */}
+          {method==="bank"&&(
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {[["Pay To",name],["Account No",bankAcc],["IFSC",ifsc],["Amount",fmt(totalAmt)],["Narration","Payment: "+tx.billNo]].map(([k,v])=>(
+                <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"rgba(124,58,237,0.08)",borderRadius:8}}>
+                  <span style={{color:"#64748b",fontSize:13}}>{k}</span>
+                  <span style={{color:"#e2e8f0",fontWeight:600,fontSize:13,fontFamily:k==="Account No"?"monospace":"inherit"}}>{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Cheque details */}
+          {method==="cheque"&&(
+            <div style={{padding:16,background:"rgba(168,85,247,0.06)",borderRadius:12,border:"1px solid rgba(168,85,247,0.2)"}}>
+              <div style={{fontSize:13,fontWeight:700,color:"#c4b5fd",marginBottom:10}}>📝 Write Cheque As:</div>
+              {[["Pay To",name],["Amount (words)",amountToWords(totalAmt)],["Amount (figures)",fmt(totalAmt)],["Cheque No",chequeNo]].map(([k,v])=>(
+                <div key={k} style={{padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)",display:"flex",gap:10}}>
+                  <span style={{color:"#64748b",fontSize:12,minWidth:110}}>{k}</span>
+                  <span style={{color:"#e2e8f0",fontSize:13,fontWeight:600}}>{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Net banking / Cash */}
+          {(method==="netbanking"||method==="cash")&&(
+            <div style={{padding:14,background:"rgba(124,58,237,0.05)",borderRadius:10,border:"1px solid rgba(124,58,237,0.18)",textAlign:"center"}}>
+              <div style={{fontSize:34,marginBottom:8}}>{method==="netbanking"?"💻":"💵"}</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{fmt(totalAmt)}</div>
+              <div style={{fontSize:13,color:"#94a3b8",marginTop:4}}>Pay to: {name}</div>
+              <div style={{fontSize:12,color:"#64748b",marginTop:2}}>Ref: {tx.billNo}</div>
+            </div>
+          )}
+
+          <div style={{display:"flex",gap:10,marginTop:6}}>
+            <button onClick={()=>setStep(1)} style={{flex:1,padding:"12px",borderRadius:10,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(124,58,237,0.08)",color:"#94a3b8",fontSize:14,fontWeight:600,cursor:"pointer"}}>← Back</button>
+            <button onClick={()=>{onPaymentDone(tx.id,{method,upiId,mobile,bankAcc,ifsc,chequeNo,ref,name});onClose();}} style={{flex:2,padding:"12px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#22c55e,#16a34a)",color:"white",fontSize:14,fontWeight:700,cursor:"pointer"}}>
+              ✅ Mark as Paid
+            </button>
+          </div>
+        </>)}
+      </div>
+    </Modal>
+  );
+}
+
+// ── AMOUNT TO WORDS (basic) ───────────────────────────────────────────
+function amountToWords(n){
+  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  const convert=num=>{
+    if(num===0) return"";
+    if(num<20) return ones[num]+" ";
+    if(num<100) return tens[Math.floor(num/10)]+" "+(num%10?ones[num%10]+" ":"");
+    if(num<1000) return ones[Math.floor(num/100)]+" Hundred "+(num%100?convert(num%100):"");
+    if(num<100000) return convert(Math.floor(num/1000))+"Thousand "+convert(num%1000);
+    if(num<10000000) return convert(Math.floor(num/100000))+"Lakh "+convert(num%100000);
+    return convert(Math.floor(num/10000000))+"Crore "+convert(num%10000000);
+  };
+  const rupees=Math.floor(n), paise=Math.round((n-rupees)*100);
+  let words=convert(rupees).trim()+" Rupees";
+  if(paise>0) words+=" and "+convert(paise).trim()+" Paise";
+  return words+" Only";
+}
+
+// ── TX FORM ───────────────────────────────────────────────────────────
+function TxForm({tx,onSave,onDelete}){
+  const [f,setF]=useState({type:tx?.type||"SALE_CASH",amount:tx?.amount||"",narration:tx?.narration||"",billNo:tx?.billNo||"MAN-"+Date.now(),party:tx?.party||"",expenseAccount:tx?.expenseAccount||"MISC"});
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const hasGST=f.amount&&["SALE_CASH","SALE_CREDIT","PURCHASE_CASH","PURCHASE_CREDIT"].includes(f.type);
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div className="form-grid">
+        <div><label style={LBL}>Type</label>
+          <select value={f.type} onChange={e=>set("type",e.target.value)} style={INP}>
+            {Object.entries(TYPE_LABELS).map(([k,v])=><option key={k} value={k}>{v}</option>)}
+          </select>
+        </div>
+        <div><label style={LBL}>Amount ₹ (excl. GST)</label>
+          <input type="number" inputMode="decimal" value={f.amount} onChange={e=>set("amount",parseFloat(e.target.value)||"")} style={INP} placeholder="5000"/>
+        </div>
+        <div><label style={LBL}>Bill No.</label><input value={f.billNo} onChange={e=>set("billNo",e.target.value)} style={INP}/></div>
+        <div><label style={LBL}>Party Name</label><input value={f.party} onChange={e=>set("party",e.target.value)} style={INP} placeholder="Customer / Vendor"/></div>
+      </div>
+      {f.type==="EXPENSE"&&<div><label style={LBL}>Category</label>
+        <select value={f.expenseAccount} onChange={e=>set("expenseAccount",e.target.value)} style={INP}>
+          <option value="SALARY">Salary</option><option value="RENT">Rent</option><option value="MISC">Miscellaneous</option>
+        </select>
+      </div>}
+      <div><label style={LBL}>Narration</label>
+        <textarea value={f.narration} onChange={e=>set("narration",e.target.value)} rows={2} style={{...INP,resize:"none"}} placeholder="Description"/>
+      </div>
+      {hasGST&&<div style={{padding:"10px 14px",background:"rgba(245,158,11,0.08)",borderRadius:10,border:"1px solid rgba(245,158,11,0.2)",fontSize:13,color:"#fbbf24"}}>
+        GST @18% = ₹{(f.amount*0.18).toFixed(2)} · Total = ₹{(f.amount*1.18).toFixed(2)}
+      </div>}
+      <div style={{display:"flex",gap:10,marginTop:4}}>
+        {onDelete&&<button onClick={onDelete} style={{flex:1,padding:"12px",borderRadius:10,border:"1px solid rgba(244,63,94,0.4)",background:"rgba(244,63,94,0.1)",color:"#f87171",fontSize:14,fontWeight:600,cursor:"pointer"}}>🗑 Delete</button>}
+        <button onClick={()=>onSave(f)} disabled={!f.amount||!f.narration} style={{flex:2,padding:"12px",borderRadius:10,border:"none",background:!f.amount||!f.narration?"#1e293b":"linear-gradient(135deg,#f59e0b,#d97706)",color:!f.amount||!f.narration?"#475569":"#0a0f1e",fontSize:14,fontWeight:700,cursor:!f.amount||!f.narration?"not-allowed":"pointer"}}>
+          {tx?"Save Changes":"Post Transaction"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── CSV IMPORT ────────────────────────────────────────────────────────
+function CSVImport({onImport,onClose}){
+  const [headers,setHeaders]=useState([]);
+  const [rawRows,setRawRows]=useState([]);
+  const [mapping,setMapping]=useState({type:"type",amount:"amount",narration:"narration",party:"party",billNo:"billno"});
+  const handleFile=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const lines=ev.target.result.trim().split("\n");
+      const hdrs=lines[0].split(",").map(h=>h.trim().replace(/"/g,"").toLowerCase());
+      setHeaders(hdrs);
+      setRawRows(lines.slice(1).map(line=>{const vals=line.split(",").map(v=>v.trim().replace(/"/g,""));const obj={};hdrs.forEach((h,i)=>obj[h]=vals[i]||"");return obj;}));
+    };
+    reader.readAsText(file);
+  };
+  const detectType=row=>{const t=(row[mapping.type]||"").toLowerCase();if(t.includes("sale")&&t.includes("credit"))return"SALE_CREDIT";if(t.includes("sale"))return"SALE_CASH";if(t.includes("purchase")&&t.includes("credit"))return"PURCHASE_CREDIT";if(t.includes("purchase"))return"PURCHASE_CASH";if(t.includes("expense"))return"EXPENSE";if(t.includes("receipt"))return"RECEIPT";if(t.includes("payment"))return"PAYMENT";return"SALE_CASH";};
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div style={{padding:12,background:"rgba(34,197,94,0.06)",borderRadius:10,border:"1px solid rgba(34,197,94,0.2)",fontSize:13,color:"#86efac",lineHeight:1.7}}>📋 Works with <strong>Vyapar, Tally, Busy, Marg, Zoho, QuickBooks</strong></div>
+      <div style={{border:"2px dashed rgba(255,255,255,0.15)",borderRadius:12,padding:28,textAlign:"center",cursor:"pointer"}} onClick={()=>document.getElementById("csvf").click()}>
+        <div style={{fontSize:36,marginBottom:8}}>📁</div>
+        <div style={{color:"#94a3b8",fontSize:14,fontWeight:600}}>Tap to upload CSV</div>
+        <input id="csvf" type="file" accept=".csv,.txt" style={{display:"none"}} onChange={handleFile}/>
+      </div>
+      {headers.length>0&&(<>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          {[["type","Type"],["amount","Amount"],["narration","Description"],["party","Party"],["billNo","Bill No"]].map(([key,label])=>(
+            <div key={key}><label style={{...LBL,fontSize:9}}>{label}</label>
+              <select value={mapping[key]} onChange={e=>setMapping(m=>({...m,[key]:e.target.value}))} style={{...INP,fontSize:13,padding:"8px 10px"}}>
+                <option value="">skip</option>{headers.map(h=><option key={h} value={h}>{h}</option>)}
+              </select>
+            </div>
+          ))}
+        </div>
+        <button onClick={()=>{onImport(rawRows.filter(r=>r[mapping.amount]).map(row=>makeTx({type:detectType(row),amount:parseFloat((row[mapping.amount]||"0").replace(/[₹,]/g,"")),narration:row[mapping.narration]||"Imported",party:row[mapping.party]||"—",billNo:row[mapping.billNo]||"CSV-"+Date.now()},"CSV")));onClose();}} style={{...BTN("#0a0f1e"),background:"linear-gradient(135deg,#22c55e,#16a34a)",color:"white"}}>
+          ✅ Import {rawRows.length} Transactions
+        </button>
+      </>)}
+    </div>
+  );
+}
+
+// ── AI BILL PARSER ────────────────────────────────────────────────────
+function AIBillParser({onImport,onClose,apiKey}){
+  const [text,setText]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [parsed,setParsed]=useState(null);
+  const parse=async()=>{
+    if(!apiKey){alert("Please set your API key first (Settings → API Key)");return;}
+    setLoading(true);setParsed(null);
+    try{
+      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:`Extract bill details. Return ONLY JSON: type (SALE_CASH/SALE_CREDIT/PURCHASE_CASH/PURCHASE_CREDIT/EXPENSE/RECEIPT/PAYMENT), amount (number excl GST), narration, party, billNo.\n\nText: ${text}`}]})});
+      const data=await res.json();
+      if(data.error){alert("API Error: "+data.error.message);setLoading(false);return;}
+      setParsed(JSON.parse(data.content?.map(b=>b.text||"").join("").replace(/```json|```/g,"").trim()));
+    }catch(e){alert("Parse failed. Check your text and try again.");}
+    setLoading(false);
+  };
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div style={{padding:12,background:"rgba(168,85,247,0.06)",borderRadius:10,border:"1px solid rgba(168,85,247,0.2)",fontSize:13,color:"#c4b5fd",lineHeight:1.7}}>🤖 Paste any bill — WhatsApp, email, SMS — AI reads and books it</div>
+      <textarea value={text} onChange={e=>setText(e.target.value)} rows={5} style={{...INP,resize:"none",fontSize:13}} placeholder="Paste WhatsApp message, email, SMS…&#10;&#10;e.g. Sold 3 phones to Ramesh for ₹45000 cash, bill INV-123"/>
+      <button onClick={parse} disabled={!text.trim()||loading} style={{...BTN("#0a0f1e"),background:!text.trim()||loading?"#1e293b":"linear-gradient(135deg,#a855f7,#7c3aed)",color:"white",cursor:!text.trim()||loading?"not-allowed":"pointer"}}>
+        {loading?"🤖 Reading…":"🤖 Extract & Book"}
+      </button>
+      {parsed&&(<div style={{padding:14,background:"rgba(34,197,94,0.06)",borderRadius:10,border:"1px solid rgba(34,197,94,0.2)"}}>
+        <div style={{fontSize:13,fontWeight:700,color:"#86efac",marginBottom:10}}>✅ Extracted!</div>
+        {[["Type",TYPE_LABELS[parsed.type]||parsed.type],["Amount",fmt(parsed.amount)],["Party",parsed.party],["Bill No",parsed.billNo]].map(([k,v])=>(
+          <div key={k} style={{display:"flex",gap:10,padding:"7px 0",borderBottom:"1px solid rgba(255,255,255,0.05)",fontSize:13}}>
+            <span style={{color:"#475569",minWidth:70}}>{k}</span><span style={{color:"#e2e8f0",fontWeight:600}}>{v}</span>
+          </div>
+        ))}
+        <button onClick={()=>{onImport([makeTx(parsed,"AI_PARSE")]);onClose();}} style={{...BTN("#0a0f1e"),background:"linear-gradient(135deg,#22c55e,#16a34a)",color:"white",marginTop:10}}>✅ Book This Transaction</button>
+      </div>)}
+    </div>
+  );
+}
+
+// ── TALLY XML ─────────────────────────────────────────────────────────
+function TallyImport({onImport,onClose}){
+  const [xmlText,setXmlText]=useState("");
+  const [parsed,setParsed]=useState([]);
+  const [done,setDone]=useState(false);
+  const sample=`<ENVELOPE><BODY><IMPORTDATA><REQUESTDATA><TALLYMESSAGE>
+  <VOUCHER><DATE>20250301</DATE><VOUCHERTYPENAME>Sales</VOUCHERTYPENAME><VOUCHERNUMBER>INV-001</VOUCHERNUMBER><PARTYLEDGERNAME>Ramesh Traders</PARTYLEDGERNAME><NARRATION>Sale of goods</NARRATION><AMOUNT>-15000</AMOUNT></VOUCHER>
+  <VOUCHER><DATE>20250302</DATE><VOUCHERTYPENAME>Purchase</VOUCHERTYPENAME><VOUCHERNUMBER>PUR-001</VOUCHERNUMBER><PARTYLEDGERNAME>Supplier Co</PARTYLEDGERNAME><NARRATION>Purchase of stock</NARRATION><AMOUNT>25000</AMOUNT></VOUCHER>
+</TALLYMESSAGE></REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>`;
+  const parse=()=>{
+    try{
+      const doc=new DOMParser().parseFromString(xmlText,"text/xml");
+      const txs=[];
+      doc.querySelectorAll("VOUCHER").forEach(v=>{
+        const vt=(v.querySelector("VOUCHERTYPENAME")?.textContent||"").toLowerCase();
+        let amt=0;v.querySelectorAll("AMOUNT").forEach(a=>{const n=Math.abs(parseFloat(a.textContent||"0"));if(n>amt)amt=n;});
+        if(!amt)return;
+        let type="SALE_CASH";
+        if(vt.includes("sales"))type="SALE_CREDIT";else if(vt.includes("purchase"))type="PURCHASE_CREDIT";else if(vt.includes("receipt"))type="RECEIPT";else if(vt.includes("payment"))type="PAYMENT";
+        txs.push({type,amount:amt,narration:v.querySelector("NARRATION")?.textContent||"Tally Import",party:v.querySelector("PARTYLEDGERNAME")?.textContent||"—",billNo:v.querySelector("VOUCHERNUMBER")?.textContent||"TLY-"+Date.now()});
+      });
+      setParsed(txs);setDone(true);
+    }catch{alert("Invalid XML format.");}
+  };
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div style={{padding:12,background:"rgba(59,130,246,0.06)",borderRadius:10,border:"1px solid rgba(59,130,246,0.2)",fontSize:13,color:"#93c5fd",lineHeight:1.7}}>🏢 <strong>Tally:</strong> Gateway → Display → Day Book → Export → XML</div>
+      {!done&&(<>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <span style={LBL}>Paste Tally XML</span>
+          <button onClick={()=>setXmlText(sample)} style={{fontSize:11,color:"#fbbf24",background:"none",border:"none",cursor:"pointer"}}>Load Sample</button>
+        </div>
+        <textarea value={xmlText} onChange={e=>setXmlText(e.target.value)} rows={7} style={{...INP,resize:"none",fontSize:11,fontFamily:"monospace",color:"#86efac"}}/>
+        <button onClick={parse} disabled={!xmlText.trim()} style={{...BTN("#0a0f1e"),background:xmlText.trim()?"linear-gradient(135deg,#3b82f6,#1d4ed8)":"#1e293b",color:"white",cursor:xmlText.trim()?"pointer":"not-allowed"}}>🔍 Parse XML</button>
+      </>)}
+      {done&&(<>
+        <div style={{padding:10,background:"rgba(34,197,94,0.08)",borderRadius:8,fontSize:13,color:"#86efac"}}>✅ Found {parsed.length} vouchers</div>
+        <div style={{maxHeight:180,overflowY:"auto"}}>
+          {parsed.map((t,i)=>(
+            <div key={i} style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",display:"flex",justifyContent:"space-between",fontSize:13}}>
+              <div><div style={{color:"#e2e8f0",fontWeight:600}}>{t.narration}</div><div style={{color:"#475569",fontSize:11,marginTop:2}}>{t.billNo} · {t.party}</div></div>
+              <span style={{color:"#fbbf24",fontFamily:"monospace",fontWeight:700,flexShrink:0,marginLeft:10}}>{fmt(t.amount)}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={()=>{onImport(parsed.map(b=>makeTx(b,"TALLY")));onClose();}} style={{...BTN("#0a0f1e"),background:"linear-gradient(135deg,#22c55e,#16a34a)",color:"white"}}>✅ Import All</button>
+      </>)}
+    </div>
+  );
+}
+
+// ── WEBHOOK PANEL ─────────────────────────────────────────────────────
+function WebhookPanel(){
+  const [copied,setCopied]=useState("");
+  const copy=(text,key)=>{navigator.clipboard?.writeText(text);setCopied(key);setTimeout(()=>setCopied(""),2000);};
+  const endpoint="https://autobooks-ca.yourdomain.com/api/v1/transaction";
+  const payload=`{\n  "type": "SALE_CASH",\n  "amount": 5000,\n  "narration": "Sale via Vyapar",\n  "party": "Customer",\n  "billNo": "INV-001"\n}`;
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div style={{padding:12,background:"rgba(245,158,11,0.06)",borderRadius:10,border:"1px solid rgba(245,158,11,0.2)",fontSize:13,color:"#fbbf24",lineHeight:1.7}}>🔗 Configure your billing app to POST to this URL on every bill — AutoBooks books it instantly.</div>
+      <div><div style={{...LBL,marginBottom:6}}>Webhook Endpoint URL</div>
+        <div style={{display:"flex",gap:8}}>
+          <div style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"10px 12px",fontSize:12,fontFamily:"monospace",color:"#94a3b8",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{endpoint}</div>
+          <button onClick={()=>copy(endpoint,"ep")} style={{padding:"10px 14px",borderRadius:8,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:copied==="ep"?"#22c55e":"#94a3b8",fontSize:14,flexShrink:0,cursor:"pointer"}}>{copied==="ep"?"✅":"📋"}</button>
+        </div>
+      </div>
+      <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+        <span style={LBL}>JSON Payload Format</span>
+        <button onClick={()=>copy(payload,"p")} style={{fontSize:11,color:copied==="p"?"#22c55e":"#fbbf24",background:"none",border:"none",cursor:"pointer"}}>{copied==="p"?"✅ Copied":"📋 Copy"}</button>
+      </div>
+        <pre style={{background:"rgba(124,58,237,0.08)",border:"1px solid rgba(124,58,237,0.18)",borderRadius:8,padding:12,fontSize:12,fontFamily:"monospace",color:"#86efac",overflowX:"auto"}}>{payload}</pre>
+      </div>
+      {[{n:"Vyapar",c:"#f97316",s:["Settings → Integrations → Webhook","Paste endpoint URL, set API key"]},{n:"Zoho Books",c:"#3b82f6",s:["Settings → Webhooks → New Webhook","Paste endpoint, map voucher fields"]},{n:"Petpooja",c:"#22c55e",s:["Dashboard → API Settings → Webhook","Every order auto-posts as SALE_CASH"]},{n:"GoFrugal",c:"#a855f7",s:["Admin → API Config → REST Webhook","Map sale=SALE_CASH, purchase=PURCHASE"]}].map((a,i)=>(
+        <details key={i} style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(124,58,237,0.15)",borderRadius:8}}>
+          <summary style={{padding:"12px 14px",cursor:"pointer",fontSize:13,fontWeight:600,color:a.c,listStyle:"none"}}>▸ {a.n}</summary>
+          <div style={{padding:"0 14px 12px"}}>{a.s.map((s,j)=><div key={j} style={{fontSize:12,color:"#94a3b8",padding:"3px 0"}}>{j+1}. {s}</div>)}</div>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────
+function App({isDemo=false}){
+  const [txs,setTxs]=useState(isDemo?DEMO:[]);
+  const [tab,setTab]=useState("dashboard");
+  const [logs,setLogs]=useState(isDemo?[{msg:"👁 Demo Mode — sample data loaded",ts:new Date()},{msg:"📊 Explore every feature freely",ts:new Date()}]:[{msg:"✅ Welcome to AutoBooks CA!",ts:new Date()},{msg:"➕ Add your first transaction to begin",ts:new Date()}]);
+  const [sidebarOpen,setSidebarOpen]=useState(false);
+  const [editTx,setEditTx]=useState(null);
+  const [modal,setModal]=useState(null);
+  const [payTx,setPayTx]=useState(null);
+  const [ledgerAcc,setLedgerAcc]=useState("SALES");
+  const [aiText,setAiText]=useState("");
+  const [aiLoading,setAiLoading]=useState(false);
+  const [apiKey,setApiKey]=useState("");
+  const [showApiModal,setShowApiModal]=useState(false);
+  const [vendors,setVendors]=useState({});
+  const logRef=useRef(null);
+
+  const bal=computeBal(txs);
+  const totalSales=txs.filter(t=>t.type.startsWith("SALE")).reduce((s,t)=>s+t.amount,0);
+  const totalPurchase=txs.filter(t=>t.type.startsWith("PURCHASE")).reduce((s,t)=>s+t.amount,0);
+  const totalExpense=txs.filter(t=>t.type==="EXPENSE").reduce((s,t)=>s+t.amount,0);
+  const grossProfit=totalSales-totalPurchase;
+  const netProfit=grossProfit-totalExpense;
+
+  // Pending payables = PURCHASE_CREDIT not yet paid
+  const pendingPayments=txs.filter(t=>(t.type==="PURCHASE_CREDIT"||t.type==="EXPENSE")&&!t.paid);
+
+  const addLog=msg=>setLogs(l=>[...l.slice(-49),{msg,ts:new Date()}]);
+  useEffect(()=>{if(logRef.current)logRef.current.scrollTop=logRef.current.scrollHeight;},[logs]);
+
+  const importTxs=(newTxs,src)=>{setTxs(t=>[...newTxs,...t]);addLog(`✅ Imported ${newTxs.length} txns via ${src}`);};
+
+  const markPaid=(txId,payInfo)=>{
+    setTxs(t=>t.map(x=>{
+      if(x.id!==txId) return x;
+      const paymentTx=makeTx({type:"PAYMENT",amount:x.amount,narration:`Payment: ${x.billNo} via ${payInfo.method.toUpperCase()}`,party:x.party,billNo:"PAY-"+x.billNo},"MANUAL");
+      setTxs(prev=>[paymentTx,...prev.map(p=>p.id===txId?{...p,paid:true}:p)]);
+      return x;
+    }));
+    if(payInfo.upiId||payInfo.mobile){
+      setVendors(v=>({...v,[payInfo.name]:{...v[payInfo.name],upiId:payInfo.upiId,mobile:payInfo.mobile,method:payInfo.method}}));
+    }
+    addLog(`💳 Paid ${payInfo.name} via ${payInfo.method.toUpperCase()}`);
+    setTxs(t=>t.map(x=>x.id===txId?{...x,paid:true}:x));
+  };
+
+  const callAI=async(key)=>{
+    setAiLoading(true);setAiText("");
+    const k=key||apiKey;
+    if(!k){setShowApiModal(true);setAiLoading(false);return;}
+    const summary=`Sales:${fmt(totalSales)}, Purchases:${fmt(totalPurchase)}, Expenses:${fmt(totalExpense)}, NetProfit:${fmt(netProfit)}, Cash:${fmt(bal["CASH"]||0)}, Bank:${fmt(bal["BANK"]||0)}, GSTPayable:${fmt((bal["GST_PAY"]||0)-(bal["GST_INPUT"]||0))}, Receivables:${fmt(bal["RECEIVABLE"]||0)}, Payables:${fmt(bal["PAYABLE"]||0)}, PendingBills:${pendingPayments.length}`;
+    try{
+      const res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:900,system:"You are a CA giving sharp, actionable advice to a small shop owner. Give 5-6 bullet points covering: GST filing status, cash flow health, profit margin, pending payment risks, and one key recommendation. Be specific with the numbers given. Under 200 words.",messages:[{role:"user",content:"Analyse my shop books: "+summary}]})
+      });
+      const data=await res.json();
+      if(data.error){setAiText("❌ API Error: "+data.error.message+"\n\nPlease check your API key in Settings.");setAiLoading(false);return;}
+      setAiText(data.content?.map(b=>b.text||"").join("")||"No response.");
+    }catch(e){
+      setAiText("❌ Connection failed.\n\nMake sure:\n• You have set your API key (tap ⚙️ → Set API Key)\n• You have internet connection\n• Your Anthropic API key is valid");
+    }
+    setAiLoading(false);
+  };
+
+  const TABS=[{id:"dashboard",icon:"📊",label:"Dashboard"},{id:"payments",icon:"💳",label:"Payments"},{id:"integrations",icon:"🔌",label:"Connect"},{id:"journal",icon:"📋",label:"Journal"},{id:"ledger",icon:"📒",label:"Ledger"},{id:"pl",icon:"📈",label:"P&L"}];
+
+  return(
+    <div className="app-shell">
+
+      {/* TOP NAV */}
+      <div className="top-nav">
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <button id="hamburger" onClick={()=>setSidebarOpen(!sidebarOpen)} style={{display:"none",background:"none",border:"none",color:"#94a3b8",fontSize:22,padding:"4px",marginRight:2}}>☰</button>
+          <div style={{background:"linear-gradient(135deg,#f59e0b,#d97706)",width:34,height:34,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>⚡</div>
+          <div>
+            <div style={{fontSize:14,fontWeight:800,color:"#fbbf24",letterSpacing:"-0.5px"}}>AutoBooks CA</div>
+            <div style={{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"1px"}}>Live Bookkeeping</div>
+          </div>
+        </div>
+        <div className="nav-tabs">
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"6px 10px",borderRadius:7,border:"none",fontSize:12,fontWeight:500,background:tab===t.id?"rgba(245,158,11,0.15)":"transparent",color:tab===t.id?"#fbbf24":"#64748b",cursor:"pointer",borderBottom:tab===t.id?"2px solid #f59e0b":"2px solid transparent",whiteSpace:"nowrap"}}>
+              {t.icon} {t.label}{t.id==="payments"&&pendingPayments.length>0?<span style={{marginLeft:5,background:"#f43f5e",borderRadius:10,fontSize:9,padding:"1px 5px",color:"white"}}>{pendingPayments.length}</span>:null}
+            </button>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:20,background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.2)"}}>
+            <div style={{width:6,height:6,borderRadius:"50%",background:"#22c55e"}}/>
+            <span style={{fontSize:10,color:"#22c55e",fontWeight:600}}>LIVE</span>
+          </div>
+          <button onClick={()=>setShowApiModal(true)} title="API Settings" style={{padding:"7px 10px",borderRadius:8,border:"1px solid rgba(255,255,255,0.1)",background:apiKey?"rgba(34,197,94,0.1)":"rgba(245,158,11,0.1)",color:apiKey?"#22c55e":"#fbbf24",fontSize:12,cursor:"pointer"}}>
+            {apiKey?"🔑 ✅":"🔑 Key"}
+          </button>
+          <button onClick={()=>setModal("add")} style={{padding:"7px 12px",borderRadius:8,fontSize:12,fontWeight:600,border:"1px solid rgba(124,58,237,0.4)",background:"rgba(124,58,237,0.15)",color:"#c4b5fd",cursor:"pointer",whiteSpace:"nowrap"}}>+ Add</button>
+        </div>
+      </div>
+
+      <div className="main-area">
+        {/* SIDEBAR OVERLAY */}
+        <div className={`sidebar-overlay ${sidebarOpen?"open":""}`} onClick={()=>setSidebarOpen(false)}/>
+
+        {/* SIDEBAR */}
+        <div className={`sidebar ${sidebarOpen?"open":""}`}>
+          <div style={{padding:"8px 12px",fontSize:9,fontWeight:700,color:"#334155",letterSpacing:"1.5px",textTransform:"uppercase",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>Activity Log</div>
+          <div ref={logRef} style={{flex:1,overflowY:"auto",padding:"8px 10px",display:"flex",flexDirection:"column",gap:4}}>
+            {logs.map((l,i)=>(
+              <div key={i} style={{fontSize:11,color:"#94a3b8",lineHeight:1.5,padding:"6px 8px",borderRadius:6,background:"rgba(255,255,255,0.02)",borderLeft:"2px solid rgba(245,158,11,0.25)"}}>
+                <div>{l.msg}</div>
+                <div style={{color:"#334155",fontSize:9,marginTop:2}}>{l.ts.toLocaleTimeString("en-IN")}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:"12px 14px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+            <div style={{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>Transactions</div>
+            <div style={{fontSize:22,fontWeight:800,color:"#fbbf24"}}>{txs.length}</div>
+            {pendingPayments.length>0&&<div style={{marginTop:6,padding:"6px 10px",background:"rgba(244,63,94,0.1)",borderRadius:8,border:"1px solid rgba(244,63,94,0.2)"}}>
+              <div style={{fontSize:10,color:"#f43f5e",fontWeight:700}}>⚠️ {pendingPayments.length} payments pending</div>
+              <div style={{fontSize:11,color:"#e2e8f0",fontFamily:"monospace",marginTop:2}}>{fmt(pendingPayments.reduce((s,t)=>s+t.amount*1.18,0))}</div>
+            </div>}
+          </div>
+        </div>
+
+        {/* CONTENT */}
+        <div className="content">
+
+          {/* ── DASHBOARD ── */}
+          {tab==="dashboard"&&(
+            <div>
+              <div className="kpi-grid">
+                {[
+                  {label:"Total Sales",val:fmt(totalSales),color:"#22c55e",icon:"💰"},
+                  {label:"Net Profit",val:fmt(netProfit),color:netProfit>=0?"#22c55e":"#f43f5e",icon:"📈"},
+                  {label:"Cash Balance",val:fmt(bal["CASH"]||0),color:"#fbbf24",icon:"🏦"},
+                  {label:"GST Payable",val:fmt((bal["GST_PAY"]||0)-(bal["GST_INPUT"]||0)),color:"#f97316",icon:"🧾"},
+                  {label:"Receivables",val:fmt(bal["RECEIVABLE"]||0),color:"#3b82f6",icon:"📬"},
+                ].map((k,i)=>(
+                  <div key={i} className="card" style={{padding:"14px"}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                      <div style={{fontSize:10,color:"#475569",textTransform:"uppercase",letterSpacing:"0.8px",fontWeight:600}}>{k.label}</div>
+                      <span style={{fontSize:16}}>{k.icon}</span>
+                    </div>
+                    <div style={{fontSize:15,fontWeight:800,color:k.color,fontFamily:"monospace"}}>{k.val}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pending payments alert */}
+              {pendingPayments.length>0&&(
+                <div style={{marginBottom:14,padding:"12px 16px",background:"rgba(244,63,94,0.08)",borderRadius:12,border:"1px solid rgba(244,63,94,0.2)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:"#f87171"}}>⚠️ {pendingPayments.length} Pending Payments</div>
+                    <div style={{fontSize:12,color:"#64748b",marginTop:2}}>Total due: {fmt(pendingPayments.reduce((s,t)=>s+t.amount*1.18,0))}</div>
+                  </div>
+                  <button onClick={()=>setTab("payments")} style={{padding:"8px 16px",borderRadius:8,border:"none",background:"rgba(244,63,94,0.2)",color:"#f87171",fontSize:13,fontWeight:700,cursor:"pointer",border:"1px solid rgba(244,63,94,0.3)"}}>
+                    Pay Now →
+                  </button>
+                </div>
+              )}
+
+              <div className="dash-grid">
+                {/* Transactions */}
+                <div className="card">
+                  <div style={{padding:"12px 14px",borderBottom:"1px solid rgba(255,255,255,0.06)",fontWeight:700,fontSize:14,display:"flex",justifyContent:"space-between"}}>
+                    <span>Recent Transactions</span><span style={{fontSize:11,color:"#475569"}}>{txs.length} total</span>
+                  </div>
+                  <div style={{maxHeight:340,overflowY:"auto"}}>
+                    {txs.map(tx=>(
+                      <div key={tx.id} className="hrow" style={{padding:"10px 14px",borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",alignItems:"center",gap:10}}>
+                        <div style={{width:10,height:10,borderRadius:"50%",background:TYPE_COLORS[tx.type]||"#64748b",flexShrink:0}}/>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontSize:13,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{tx.narration}</div>
+                          <div style={{fontSize:11,color:"#475569",marginTop:2}}>{tx.billNo} · {tx.party}{tx.paid?<span style={{color:"#22c55e",marginLeft:6}}>✓ Paid</span>:null}</div>
+                        </div>
+                        <div style={{textAlign:"right",flexShrink:0}}>
+                          <div style={{fontSize:12,fontFamily:"monospace",fontWeight:700,color:tx.type.startsWith("SALE")||tx.type==="RECEIPT"?"#22c55e":"#f43f5e"}}>
+                            {tx.type.startsWith("SALE")||tx.type==="RECEIPT"?"+":"-"}{fmt(tx.amount)}
+                          </div>
+                          <div style={{fontSize:9,color:SRC_COLORS[tx.source]||"#64748b",textTransform:"uppercase"}}>{tx.source}</div>
+                        </div>
+                        <div style={{display:"flex",flexDirection:"column",gap:4,flexShrink:0}}>
+                          <button onClick={()=>setEditTx(tx)} style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(255,255,255,0.1)",background:"transparent",color:"#64748b",fontSize:10,cursor:"pointer"}}>Edit</button>
+                          {(tx.type==="PURCHASE_CREDIT"||tx.type==="EXPENSE")&&!tx.paid&&(
+                            <button onClick={()=>setPayTx(tx)} style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(245,158,11,0.3)",background:"rgba(245,158,11,0.1)",color:"#fbbf24",fontSize:10,cursor:"pointer",whiteSpace:"nowrap"}}>Pay</button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Insights */}
+                <div className="card" style={{padding:16,display:"flex",flexDirection:"column",gap:12,minHeight:220}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div style={{fontWeight:700,fontSize:14}}>🤖 AI CA Insights</div>
+                    {!apiKey&&<button onClick={()=>setShowApiModal(true)} style={{fontSize:10,color:"#fbbf24",background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:6,padding:"3px 8px",cursor:"pointer"}}>Set API Key</button>}
+                  </div>
+                  {!aiText&&!aiLoading&&(
+                    <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,textAlign:"center"}}>
+                      <div style={{fontSize:34}}>📊</div>
+                      <div style={{fontSize:13,color:"#475569"}}>{apiKey?"Tap to get AI analysis":"Set API key first, then analyse"}</div>
+                      <button onClick={()=>callAI()} style={{padding:"12px 20px",borderRadius:10,background:"linear-gradient(135deg,#f59e0b,#d97706)",border:"none",color:"#0a0f1e",fontWeight:700,fontSize:14,cursor:"pointer"}}>
+                        {apiKey?"📊 Analyse Books":"🔑 Setup & Analyse"}
+                      </button>
+                    </div>
+                  )}
+                  {aiLoading&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:"#f59e0b",fontSize:14}}>⚡ Analysing your books…</div>}
+                  {aiText&&!aiLoading&&(
+                    <div style={{flex:1,overflowY:"auto",fontSize:13,lineHeight:1.8,color:"#cbd5e1"}}>
+                      {aiText.split("\n").filter(Boolean).map((line,i)=>(
+                        <div key={i} style={{display:"flex",gap:8,marginBottom:8}}>
+                          <span style={{color:line.startsWith("❌")?"#f43f5e":"#f59e0b",flexShrink:0}}>{line.startsWith("❌")?"❌":"▸"}</span>
+                          <span style={{whiteSpace:"pre-wrap"}}>{line.replace(/^[-•*❌]\s*/,"")}</span>
+                        </div>
+                      ))}
+                      <button onClick={()=>setAiText("")} style={{fontSize:11,color:"#475569",background:"none",border:"none",cursor:"pointer",marginTop:6}}>↺ Re-analyse</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── PAYMENTS ── */}
+          {tab==="payments"&&(
+            <div>
+              <div style={{marginBottom:16}}>
+                <div style={{fontSize:18,fontWeight:800,marginBottom:4}}>💳 Pending Payments</div>
+                <div style={{fontSize:13,color:"#475569"}}>Pay vendors via UPI, bank transfer, cheque or net banking</div>
+              </div>
+              {pendingPayments.length===0?(
+                <div style={{textAlign:"center",padding:"40px 20px",color:"#475569"}}>
+                  <div style={{fontSize:48,marginBottom:12}}>✅</div>
+                  <div style={{fontSize:16,fontWeight:700,color:"#e2e8f0",marginBottom:6}}>All Payments Cleared!</div>
+                  <div style={{fontSize:13}}>No pending bills. You're up to date.</div>
+                </div>
+              ):(
+                <>
+                  {/* Summary */}
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
+                    <div className="card" style={{padding:"14px"}}>
+                      <div style={{fontSize:10,color:"#475569",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:6}}>Pending Bills</div>
+                      <div style={{fontSize:22,fontWeight:800,color:"#f43f5e"}}>{pendingPayments.length}</div>
+                    </div>
+                    <div className="card" style={{padding:"14px"}}>
+                      <div style={{fontSize:10,color:"#475569",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:6}}>Total Due</div>
+                      <div style={{fontSize:16,fontWeight:800,color:"#f43f5e",fontFamily:"monospace"}}>{fmt(pendingPayments.reduce((s,t)=>s+t.amount*1.18,0))}</div>
+                    </div>
+                    <div className="card" style={{padding:"14px"}}>
+                      <div style={{fontSize:10,color:"#475569",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:6}}>Vendors</div>
+                      <div style={{fontSize:22,fontWeight:800,color:"#fbbf24"}}>{new Set(pendingPayments.map(t=>t.party)).size}</div>
+                    </div>
+                  </div>
+
+                  {/* Pending bills list */}
+                  <div className="card">
+                    {pendingPayments.map((tx,i)=>(
+                      <div key={tx.id} style={{padding:"14px 16px",borderBottom:"1px solid rgba(255,255,255,0.05)",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                            <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{tx.party}</div>
+                            <span style={{fontSize:10,padding:"2px 7px",borderRadius:10,background:"rgba(244,63,94,0.1)",color:"#f87171",border:"1px solid rgba(244,63,94,0.2)"}}>UNPAID</span>
+                          </div>
+                          <div style={{fontSize:12,color:"#64748b",marginTop:3}}>{tx.billNo} · {tx.narration}</div>
+                          <div style={{fontSize:11,color:"#475569",marginTop:2}}>{fmtD(tx.date)}</div>
+                        </div>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:16,fontWeight:800,color:"#f43f5e",fontFamily:"monospace"}}>{fmt(tx.amount*1.18)}</div>
+                          <div style={{fontSize:11,color:"#64748b"}}>incl. GST</div>
+                        </div>
+                        <button onClick={()=>setPayTx(tx)} style={{padding:"10px 18px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#7c3aed,#6d28d9)",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}}>
+                          💳 Pay Now
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ── INTEGRATIONS ── */}
+          {tab==="integrations"&&(
+            <div>
+              <div style={{marginBottom:16}}>
+                <div style={{fontSize:18,fontWeight:800,marginBottom:4}}>🔌 Connect Your Billing App</div>
+                <div style={{fontSize:13,color:"#475569"}}>All methods — pick what works for your shop</div>
+              </div>
+              <div className="intg-grid" style={{marginBottom:16}}>
+                {[
+                  {key:"csv",icon:"📁",title:"CSV / Excel Import",sub:"Vyapar · Tally · Busy · Zoho",desc:"Export CSV from any billing app → upload → auto-booked",color:"#22c55e",badge:"Works Everywhere"},
+                  {key:"ai",icon:"🤖",title:"AI Bill Parser",sub:"WhatsApp · Email · SMS",desc:"Paste any bill text — AI reads and books it instantly",color:"#a855f7",badge:"AI Powered"},
+                  {key:"tally",icon:"🏢",title:"Tally XML Import",sub:"Tally Prime · Tally ERP 9",desc:"Export XML from Tally → paste → all vouchers imported",color:"#3b82f6",badge:"Tally Native"},
+                  {key:"webhook",icon:"🔗",title:"Live API / Webhook",sub:"Vyapar · Zoho · Petpooja · GoFrugal",desc:"Every bill auto-pushed to AutoBooks in real time",color:"#f59e0b",badge:"Real-time"},
+                ].map(intg=>(
+                  <div key={intg.key} className="icard card" onClick={()=>setModal(intg.key)} style={{padding:18}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+                      <div style={{fontSize:30}}>{intg.icon}</div>
+                      <span style={{fontSize:10,padding:"3px 8px",borderRadius:20,background:`${intg.color}22`,color:intg.color,border:`1px solid ${intg.color}44`,fontWeight:600}}>{intg.badge}</span>
+                    </div>
+                    <div style={{fontSize:14,fontWeight:700,color:"#f1f5f9",marginBottom:3}}>{intg.title}</div>
+                    <div style={{fontSize:11,color:intg.color,marginBottom:8}}>{intg.sub}</div>
+                    <div style={{fontSize:12,color:"#64748b",lineHeight:1.6}}>{intg.desc}</div>
+                    <div style={{marginTop:12,padding:"9px",borderRadius:8,background:`${intg.color}11`,border:`1px solid ${intg.color}22`,textAlign:"center",fontSize:13,color:intg.color,fontWeight:600}}>Tap to Open →</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── JOURNAL ── */}
+          {tab==="journal"&&(
+            <div>
+              <div style={{marginBottom:12,fontSize:16,fontWeight:800}}>Journal Entries</div>
+              <div className="card">
+                <div className="table-wrap">
+                  <table>
+                    <thead><tr style={{background:"rgba(124,58,237,0.08)"}}>
+                      {["Date","Bill No","Narration","Account","Debit","Credit","Src"].map(h=>(
+                        <th key={h} style={{padding:"10px 12px",textAlign:["Debit","Credit"].includes(h)?"right":"left",color:"#475569",fontSize:10,fontWeight:600,textTransform:"uppercase",whiteSpace:"nowrap"}}>{h}</th>
+                      ))}
+                    </tr></thead>
+                    <tbody>{txs.flatMap(tx=>tx.journalEntries.map((e,ei)=>(
+                      <tr key={tx.id+"-"+ei} className="hrow" style={{borderTop:"1px solid rgba(255,255,255,0.04)"}}>
+                        <td style={{padding:"8px 12px",color:"#64748b",fontFamily:"monospace",fontSize:11,whiteSpace:"nowrap"}}>{ei===0?fmtD(tx.date):""}</td>
+                        <td style={{padding:"8px 12px",color:"#fbbf24",fontFamily:"monospace",fontSize:11,whiteSpace:"nowrap"}}>{ei===0?tx.billNo:""}</td>
+                        <td style={{padding:"8px 12px",color:"#94a3b8",fontSize:12,maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ei===0?tx.narration:""}</td>
+                        <td style={{padding:"8px 12px",fontWeight:500,fontSize:12,whiteSpace:"nowrap"}}>{ACCOUNTS[e.account]?.name}</td>
+                        <td style={{padding:"8px 12px",color:"#22c55e",fontFamily:"monospace",fontWeight:600,textAlign:"right",whiteSpace:"nowrap"}}>{e.dr>0?fmt(e.dr):""}</td>
+                        <td style={{padding:"8px 12px",color:"#f97316",fontFamily:"monospace",fontWeight:600,textAlign:"right",whiteSpace:"nowrap"}}>{e.cr>0?fmt(e.cr):""}</td>
+                        <td style={{padding:"8px 12px"}}><span style={{fontSize:9,padding:"2px 5px",borderRadius:8,background:`${SRC_COLORS[tx.source]||"#64748b"}22`,color:SRC_COLORS[tx.source]||"#64748b",whiteSpace:"nowrap"}}>{tx.source}</span></td>
+                      </tr>
+                    )))}</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── LEDGER ── */}
+          {tab==="ledger"&&(
+            <div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14}}>
+                {Object.keys(ACCOUNTS).map(k=>(
+                  <button key={k} onClick={()=>setLedgerAcc(k)} style={{padding:"6px 12px",borderRadius:20,fontSize:12,border:`1px solid ${ledgerAcc===k?"rgba(245,158,11,0.5)":"rgba(255,255,255,0.08)"}`,background:ledgerAcc===k?"rgba(245,158,11,0.12)":"transparent",color:ledgerAcc===k?"#fbbf24":"#64748b",cursor:"pointer"}}>
+                    {ACCOUNTS[k].name}
+                  </button>
+                ))}
+              </div>
+              <div className="card">
+                <div style={{padding:"14px 16px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:14}}>{ACCOUNTS[ledgerAcc]?.name}</div>
+                    <div style={{fontSize:11,color:"#475569"}}>{ACCOUNTS[ledgerAcc]?.code} · {ACCOUNTS[ledgerAcc]?.type}</div>
+                  </div>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontSize:11,color:"#475569"}}>Balance</div>
+                    <div style={{fontSize:20,fontWeight:800,fontFamily:"monospace",color:(bal[ledgerAcc]||0)>=0?"#22c55e":"#f43f5e"}}>
+                      {fmt(Math.abs(bal[ledgerAcc]||0))} {(bal[ledgerAcc]||0)>=0?"Dr":"Cr"}
+                    </div>
+                  </div>
+                </div>
+                <div className="table-wrap">
+                  <table>
+                    <thead><tr style={{background:"rgba(124,58,237,0.05)"}}>
+                      {["Date","Bill No","Narration","Dr","Cr","Balance"].map(h=>(
+                        <th key={h} style={{padding:"9px 12px",textAlign:["Dr","Cr","Balance"].includes(h)?"right":"left",color:"#475569",fontSize:10,fontWeight:600,textTransform:"uppercase",whiteSpace:"nowrap"}}>{h}</th>
+                      ))}
+                    </tr></thead>
+                    <tbody>{(()=>{let run=0;return [...txs].reverse().flatMap(tx=>tx.journalEntries.filter(e=>e.account===ledgerAcc).map((e,i)=>{run+=e.dr-e.cr;return(<tr key={tx.id+"-"+i} className="hrow" style={{borderTop:"1px solid rgba(255,255,255,0.04)"}}>
+                      <td style={{padding:"8px 12px",color:"#64748b",fontFamily:"monospace",fontSize:11,whiteSpace:"nowrap"}}>{fmtD(tx.date)}</td>
+                      <td style={{padding:"8px 12px",color:"#fbbf24",fontFamily:"monospace",fontSize:11,whiteSpace:"nowrap"}}>{tx.billNo}</td>
+                      <td style={{padding:"8px 12px",color:"#94a3b8",maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:12}}>{tx.narration}</td>
+                      <td style={{padding:"8px 12px",color:"#22c55e",fontFamily:"monospace",textAlign:"right",whiteSpace:"nowrap"}}>{e.dr>0?fmt(e.dr):"—"}</td>
+                      <td style={{padding:"8px 12px",color:"#f97316",fontFamily:"monospace",textAlign:"right",whiteSpace:"nowrap"}}>{e.cr>0?fmt(e.cr):"—"}</td>
+                      <td style={{padding:"8px 12px",fontFamily:"monospace",fontWeight:700,textAlign:"right",whiteSpace:"nowrap",color:run>=0?"#e2e8f0":"#f43f5e"}}>{fmt(Math.abs(run))} {run>=0?"Dr":"Cr"}</td>
+                    </tr>);}));})()}</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── P&L ── */}
+          {tab==="pl"&&(
+            <div style={{maxWidth:560}}>
+              <div style={{marginBottom:12,fontSize:16,fontWeight:800}}>Profit & Loss Statement</div>
+              <div className="card" style={{padding:20}}>
+                {[["REVENUE",[["Sales Revenue",bal["SALES"]||0]],bal["SALES"]||0,"#22c55e"],["COST OF GOODS SOLD",[["Purchases",bal["PURCHASE"]||0]],bal["PURCHASE"]||0,"#f97316"]].map(([title,rows,total,color])=>(
+                  <div key={title} style={{marginBottom:18}}>
+                    <div style={{fontSize:10,fontWeight:700,color:"#475569",letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:10}}>{title}</div>
+                    {rows.map(([name,val])=>(
+                      <div key={name} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",fontSize:14,color:"#94a3b8"}}>
+                        <span>{name}</span><span style={{fontFamily:"monospace"}}>{fmt(Math.abs(val))}</span>
+                      </div>
+                    ))}
+                    <div style={{display:"flex",justifyContent:"space-between",padding:"10px 0",fontSize:14,fontWeight:700,color}}>
+                      <span>Total {title}</span><span style={{fontFamily:"monospace"}}>{fmt(Math.abs(total))}</span>
+                    </div>
+                  </div>
+                ))}
+                <div style={{padding:"12px 14px",background:"rgba(124,58,237,0.08)",borderRadius:10,display:"flex",justifyContent:"space-between",marginBottom:18,fontSize:15,fontWeight:700}}>
+                  <span style={{color:"#fbbf24"}}>Gross Profit</span>
+                  <span style={{fontFamily:"monospace",color:grossProfit>=0?"#22c55e":"#f43f5e"}}>{fmt(grossProfit)}</span>
+                </div>
+                <div style={{marginBottom:18}}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#475569",letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:10}}>OPERATING EXPENSES</div>
+                  {[["Salary","SALARY"],["Rent","RENT"],["Miscellaneous","MISC"]].filter(([,k])=>bal[k]).map(([name,key])=>(
+                    <div key={key} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",fontSize:14,color:"#94a3b8"}}>
+                      <span>{name}</span><span style={{fontFamily:"monospace",color:"#f43f5e"}}>{fmt(bal[key])}</span>
+                    </div>
+                  ))}
+                  <div style={{display:"flex",justifyContent:"space-between",padding:"10px 0",fontSize:14,fontWeight:700,color:"#f43f5e"}}>
+                    <span>Total Expenses</span><span style={{fontFamily:"monospace"}}>{fmt(totalExpense)}</span>
+                  </div>
+                </div>
+                <div style={{padding:"16px 18px",background:netProfit>=0?"rgba(34,197,94,0.1)":"rgba(244,63,94,0.1)",borderRadius:12,border:`1px solid ${netProfit>=0?"rgba(34,197,94,0.3)":"rgba(244,63,94,0.3)"}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:16,fontWeight:800,color:netProfit>=0?"#22c55e":"#f43f5e"}}>Net {netProfit>=0?"Profit":"Loss"}</span>
+                  <span style={{fontFamily:"monospace",fontSize:22,fontWeight:800,color:netProfit>=0?"#22c55e":"#f43f5e"}}>{fmt(Math.abs(netProfit))}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <div style={{background:"#06000f",borderTop:"1px solid rgba(255,255,255,0.06)",padding:"10px 20px",textAlign:"center",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+        <span style={{fontSize:11,color:"#334155"}}>Made by</span>
+        <span style={{fontSize:12,fontWeight:700,color:"#475569",letterSpacing:"0.3px"}}>Kalbi Solutions Pvt. Ltd.</span>
+        <span style={{fontSize:11,color:"#1e293b"}}>·</span>
+        <span style={{fontSize:10,color:"#1e293b"}}>© {new Date().getFullYear()}</span>
+      </div>
+
+      {/* ── BOTTOM NAV (mobile/tablet) ── */}
+      <div className="bottom-nav">
+        {TABS.map(t=>(
+          <button key={t.id} onClick={()=>{setTab(t.id);setSidebarOpen(false);}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"7px 2px",border:"none",background:"transparent",color:tab===t.id?"#fbbf24":"#475569",cursor:"pointer",borderTop:tab===t.id?"2px solid #f59e0b":"2px solid transparent",position:"relative"}}>
+            <span style={{fontSize:18}}>{t.icon}</span>
+            <span style={{fontSize:9,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px",whiteSpace:"nowrap"}}>{t.label}</span>
+            {t.id==="payments"&&pendingPayments.length>0&&<span style={{position:"absolute",top:4,right:"20%",background:"#f43f5e",borderRadius:"50%",width:14,height:14,fontSize:9,display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:700}}>{pendingPayments.length}</span>}
+          </button>
+        ))}
+      </div>
+
+      {/* ── MODALS ── */}
+      {showApiModal&&<APIKeyModal onSave={key=>{setApiKey(key);addLog("🔑 API key saved");setTimeout(()=>callAI(key),300);}} onClose={()=>setShowApiModal(false)}/>}
+      {modal==="add"&&<Modal title="✍️ Add Transaction" onClose={()=>setModal(null)}><TxForm onSave={f=>{setTxs(t=>[makeTx(f,"MANUAL"),...t]);addLog("✍️ Manual: "+f.narration);setModal(null);}}/></Modal>}
+      {modal==="csv"&&<Modal title="📁 CSV Import" onClose={()=>setModal(null)}><CSVImport onImport={t=>importTxs(t,"CSV")} onClose={()=>setModal(null)}/></Modal>}
+      {modal==="ai"&&<Modal title="🤖 AI Bill Parser" onClose={()=>setModal(null)}><AIBillParser onImport={t=>importTxs(t,"AI_PARSE")} onClose={()=>setModal(null)} apiKey={apiKey}/></Modal>}
+      {modal==="tally"&&<Modal title="🏢 Tally XML" onClose={()=>setModal(null)}><TallyImport onImport={t=>importTxs(t,"TALLY")} onClose={()=>setModal(null)}/></Modal>}
+      {modal==="webhook"&&<Modal title="🔗 Webhook Setup" onClose={()=>setModal(null)}><WebhookPanel/></Modal>}
+      {editTx&&<Modal title={"Edit: "+editTx.billNo} onClose={()=>setEditTx(null)}><TxForm tx={editTx} onSave={f=>{setTxs(t=>t.map(x=>x.id===editTx.id?{...makeTx(f,"MANUAL"),id:editTx.id,date:editTx.date,paid:editTx.paid}:x));addLog("✏️ Edited "+editTx.billNo);setEditTx(null);}} onDelete={()=>{setTxs(t=>t.filter(x=>x.id!==editTx.id));addLog("🗑 Deleted "+editTx.billNo);setEditTx(null);}}/></Modal>}
+      {payTx&&<PayNowModal tx={payTx} vendors={vendors} onPaymentDone={markPaid} onClose={()=>setPayTx(null)}/>}
+      <div style={{borderTop:"1px solid rgba(124,58,237,0.15)",padding:"7px 20px",display:"flex",alignItems:"center",justifyContent:"center",gap:6,background:"rgba(6,0,15,0.98)",flexShrink:0}}>
+        <span style={{fontSize:10,color:"#334155"}}>Made by</span>
+        <span style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.18)",letterSpacing:"0.3px"}}>Kalbi Solutions Pvt. Ltd.</span>
+        <span style={{fontSize:10,color:"#1e293b"}}>· © 2025</span>
+      </div>
+    </div>
+  );
+}
+
+window._renderApp=function(isDemo){ReactDOM.createRoot(document.getElementById("root")).render(<App isDemo={!!isDemo}/>);};
+
+</script>
+</body>
+</html>
